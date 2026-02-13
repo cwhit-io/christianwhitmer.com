@@ -6,10 +6,21 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Christian Whitmer</title>
+		<title>Christian Whitmer | Blog</title>
+		<meta name="description" content="The personal blog of Christian Whitmer. Thoughts, projects, and updates." />
+		<meta name="author" content="Christian Whitmer" />
 	</head>
 	<body>
-		<slot />
+		<header style="background: #fff; border-bottom: 1px solid #eee; padding: 2rem 0; text-align: center;">
+			<h1 style="margin: 0; font-size: 2.5rem; letter-spacing: -1px;">Christian Whitmer</h1>
+			<p style="margin: 0.5rem 0 0 0; font-size: 1.2rem; color: #666;">Personal Blog & Portfolio</p>
+		</header>
+		<main style="max-width: 700px; margin: 2rem auto; padding: 0 1rem;">
+			<slot />
+		</main>
+		<footer style="text-align: center; color: #aaa; font-size: 0.9rem; padding: 2rem 0 1rem 0;">
+			© {new Date().getFullYear()} Christian Whitmer. All rights reserved.
+		</footer>
 	</body>
 </html>
 
