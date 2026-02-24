@@ -26,17 +26,31 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 <Layout title={post.data.title} description={post.data.description}>
     <article class="article" data-pagefind-body>
         <header class="article-header">
-            <div class="article-meta">
-                <time datetime={post.data.date.toISOString()}
-                    >{formattedDate}</time
-                >
-                <span class="sep" aria-hidden="true">·</span>
-                <span>{post.data.author}</span>
-            </div>
             <h1 class="article-title" transition:name={`post-title-${slug}`}>
                 {post.data.title}
             </h1>
-            <p class="article-desc">{post.data.description}</p>
+            <p class="article-subtitle">{post.data.description}</p>
+            <div class="article-meta">
+                <span>By {post.data.author}</span>
+                <span class="sep" aria-hidden="true">|</span>
+                <time datetime={post.data.date.toISOString()}
+                    >{formattedDate}</time
+                >
+                {
+                    post.data.tags && post.data.tags.length > 0 && (
+                        <>
+                            <span class="sep" aria-hidden="true">
+                                |
+                            </span>
+                            <span class="article-tags">
+                                {post.data.tags.map((tag) => (
+                                    <span class="tag">{tag}</span>
+                                ))}
+                            </span>
+                        </>
+                    )
+                }
+            </div>
         </header>
 
         {
@@ -85,51 +99,26 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         margin: 0 auto;
     }
 
-    /* Back link */
-    .back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        font-size: 0.82rem;
-        font-weight: 500;
-        color: var(--text-3);
-        text-decoration: none;
-        margin-bottom: 2.5rem;
-        padding: 0.35rem 0.7rem;
-        border-radius: 6px;
-        margin-left: -0.7rem;
-        border: 1px solid transparent;
-        transition:
-            color 0.15s,
-            background 0.15s,
-            border-color 0.15s;
-    }
-
-    .back:hover {
-        color: var(--text);
-        background: var(--border);
-        border-color: var(--border);
-    }
-
-    /* Header */
+    /* ── Header ── */
     .article-header {
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 2rem 2.25rem 2.25rem;
         margin-bottom: 2.5rem;
-        position: relative;
-        overflow: hidden;
     }
 
-    .article-header::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    .article-title {
+        font-size: clamp(2rem, 5.5vw, 3.25rem);
+        font-weight: 800;
+        letter-spacing: -0.045em;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 0.75rem;
+    }
+
+    .article-subtitle {
+        font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+        font-style: italic;
+        color: var(--text-2);
+        line-height: 1.65;
+        margin-bottom: 1.25rem;
     }
 
     .article-meta {
@@ -137,33 +126,35 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         color: var(--text-3);
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         gap: 0.5rem;
-        margin-bottom: 0.875rem;
     }
 
     .sep {
         opacity: 0.4;
     }
 
-    .article-title {
-        font-size: clamp(1.75rem, 4.5vw, 2.75rem);
-        font-weight: 800;
-        letter-spacing: -0.04em;
-        line-height: 1.13;
-        color: var(--text);
-        margin-bottom: 1rem;
+    .article-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
     }
 
-    .article-desc {
-        font-size: 1.05rem;
-        color: var(--text-2);
-        line-height: 1.65;
-        margin-bottom: 0;
+    .tag {
+        display: inline-block;
+        padding: 0.15em 0.55em;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
     }
 
-    /* Hero image */
+    /* ── Hero image ── */
     .article-image {
-        margin: 2.5rem 0;
+        width: 100%;
+        margin: 0 0 2.5rem;
         border-radius: 14px;
         overflow: hidden;
         border: 1px solid var(--border);
@@ -175,6 +166,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
     }
 
     /* ── Prose ── */
@@ -182,7 +174,6 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         font-size: 1rem;
         line-height: 1.85;
         color: var(--text-2);
-        margin-top: 2.5rem;
     }
 
     .prose :global(h2) {
@@ -315,7 +306,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         color: var(--text);
     }
 
-    /* Footer */
+    /* ── Footer ── */
     .article-footer {
         margin-top: 4rem;
         padding-top: 2rem;

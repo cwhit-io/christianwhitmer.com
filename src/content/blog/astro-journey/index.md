@@ -3,6 +3,7 @@ title: "My Astro Journey Begins"
 date: 2026-02-14
 description: "Starting my journey with Astro and sharing my first impressions."
 author: "Christian Whitmer"
+tags: ["Astro", "Web Dev", "Tutorial"]
 headerImage: "DJI_0170.jpg"
 ---
 
