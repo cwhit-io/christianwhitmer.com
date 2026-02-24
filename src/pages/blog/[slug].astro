@@ -26,9 +26,6 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 <Layout title={post.data.title} description={post.data.description}>
     <article class="article" data-pagefind-body>
         <header class="article-header">
-            <h1 class="article-title" transition:name={`post-title-${slug}`}>
-                {post.data.title}
-            </h1>
             <div class="article-meta">
                 <time datetime={post.data.date.toISOString()}
                     >{formattedDate}</time
@@ -36,7 +33,9 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
                 <span class="sep" aria-hidden="true">·</span>
                 <span>{post.data.author}</span>
             </div>
-
+            <h1 class="article-title" transition:name={`post-title-${slug}`}>
+                {post.data.title}
+            </h1>
             <p class="article-desc">{post.data.description}</p>
         </header>
 
@@ -113,6 +112,26 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
     }
 
     /* Header */
+    .article-header {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem 2.25rem 2.25rem;
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .article-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
     .article-meta {
         font-size: 0.82rem;
         color: var(--text-3);
@@ -139,9 +158,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         font-size: 1.05rem;
         color: var(--text-2);
         line-height: 1.65;
-        padding-bottom: 2.5rem;
         margin-bottom: 0;
-        border-bottom: 1px solid var(--border);
     }
 
     /* Hero image */
