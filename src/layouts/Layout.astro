@@ -1,6 +1,5 @@
 ---
 import { ViewTransitions } from "astro:transitions";
-import { Image } from "astro:assets";
 import "../styles/global.css";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import avatar from "../assets/icon-3d.png";
@@ -58,12 +57,12 @@ const pageTitle =
 		<header class="site-header">
 			<nav class="nav">
 				<a href="/" class="logo" aria-label="Christian Whitmer — home">
-					<Image
-						src={avatar}
+					<img
+						src={avatar.src}
 						alt="Christian Whitmer"
 						class="logo-mark"
-						width={32}
-						height={32}
+						width="32"
+						height="32"
 					/>
 					<span class="logo-text">Christian Whitmer</span>
 				</a>
