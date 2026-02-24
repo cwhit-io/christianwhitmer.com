@@ -19,7 +19,16 @@
 
 <script>
 	async function initSearch() {
+		const container = document.getElementById("search-container");
 		const fallback = document.getElementById("search-fallback");
+		if (!container) return;
+
+		// Already mounted into this container — don't create a second instance
+		if (container.children.length > 0) {
+			if (fallback) fallback.hidden = true;
+			return;
+		}
+
 		try {
 			// @ts-ignore — generated at build time; string concat prevents bundler resolution
 			const { PagefindUI } = await import(
@@ -33,7 +42,6 @@
 			});
 			if (fallback) fallback.hidden = true;
 		} catch {
-			// Show placeholder so visitors know search exists but index isn't built yet
 			if (fallback) fallback.hidden = false;
 		}
 	}
