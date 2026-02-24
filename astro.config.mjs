@@ -9,7 +9,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     site: 'https://christianwhitmer.com',
     output: 'server',
-    adapter: cloudflare(),
+    adapter: cloudflare({ session: false }),
     integrations: [sitemap(), mdx()],
     vite: {
         plugins: [tailwindcss()],

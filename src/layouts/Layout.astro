@@ -50,6 +50,14 @@ const pageTitle =
 			if (stored === "dark" || (!stored && prefersDark)) {
 				document.documentElement.classList.add("dark");
 			}
+			// Persist theme across ViewTransitions page swaps
+			document.addEventListener("astro:before-swap", (e) => {
+				if (document.documentElement.classList.contains("dark")) {
+					e.newDocument.documentElement.classList.add("dark");
+				} else {
+					e.newDocument.documentElement.classList.remove("dark");
+				}
+			});
 		</script>
 		<ViewTransitions />
 	</head>
