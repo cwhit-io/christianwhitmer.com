@@ -11,8 +11,8 @@
 <script>
 	async function initSearch() {
 		try {
-			// @ts-ignore — generated at build time
-			const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
+			// @ts-ignore — generated at build time; string concat prevents bundler resolution
+			const { PagefindUI } = await import('/pagefind/pagefind-ui' + '.js');
 			new PagefindUI({
 				element: '#search-container',
 				showSubResults: true,
