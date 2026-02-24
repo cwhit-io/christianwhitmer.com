@@ -1,7 +1,9 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
-import '../styles/global.css';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import { ViewTransitions } from "astro:transitions";
+import { Image } from "astro:assets";
+import "../styles/global.css";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import avatar from "../assets/icon-3d.png";
 
 interface Props {
 	title?: string;
@@ -9,12 +11,12 @@ interface Props {
 }
 
 const {
-	title = 'Christian Whitmer',
-	description = 'Thoughts, projects, and updates on web development and technology.',
+	title = "Christian Whitmer",
+	description = "Thoughts, projects, and updates on web development and technology.",
 } = Astro.props;
 
 const pageTitle =
-	title === 'Christian Whitmer' ? title : `${title} — Christian Whitmer`;
+	title === "Christian Whitmer" ? title : `${title} — Christian Whitmer`;
 ---
 
 <!doctype html>
@@ -28,16 +30,26 @@ const pageTitle =
 		<title>{pageTitle}</title>
 		<meta name="description" content={description} />
 		<meta name="author" content="Christian Whitmer" />
-		<link rel="alternate" type="application/rss+xml" title="Christian Whitmer's Blog" href="/rss.xml" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="Christian Whitmer's Blog"
+			href="/rss.xml"
+		/>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&display=swap" rel="stylesheet" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..800&display=swap"
+			rel="stylesheet"
+		/>
 		<!-- Prevent dark mode flash before ViewTransitions -->
 		<script is:inline>
-			const stored = localStorage.getItem('theme');
-			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			if (stored === 'dark' || (!stored && prefersDark)) {
-				document.documentElement.classList.add('dark');
+			const stored = localStorage.getItem("theme");
+			const prefersDark = window.matchMedia(
+				"(prefers-color-scheme: dark)",
+			).matches;
+			if (stored === "dark" || (!stored && prefersDark)) {
+				document.documentElement.classList.add("dark");
 			}
 		</script>
 		<ViewTransitions />
@@ -46,7 +58,13 @@ const pageTitle =
 		<header class="site-header">
 			<nav class="nav">
 				<a href="/" class="logo" aria-label="Christian Whitmer — home">
-					<span class="logo-mark">CW</span>
+					<Image
+						src={avatar}
+						alt="Christian Whitmer"
+						class="logo-mark"
+						width={32}
+						height={32}
+					/>
 					<span class="logo-text">Christian Whitmer</span>
 				</a>
 				<div class="nav-right">
@@ -65,7 +83,10 @@ const pageTitle =
 
 		<footer class="site-footer">
 			<div class="footer-inner">
-				<p>&copy; {new Date().getFullYear()} Christian Whitmer. All rights reserved.</p>
+				<p>
+					&copy; {new Date().getFullYear()} Christian Whitmer. All rights
+					reserved.
+				</p>
 				<div class="footer-links">
 					<a href="/rss.xml">RSS</a>
 					<a href="/sitemap-index.xml">Sitemap</a>
@@ -107,20 +128,15 @@ const pageTitle =
 		flex-shrink: 0;
 	}
 
-	.logo:hover { opacity: 0.75; }
+	.logo:hover {
+		opacity: 0.75;
+	}
 
 	.logo-mark {
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		width: 32px;
 		height: 32px;
-		background: var(--accent);
-		color: #fff;
-		border-radius: 8px;
-		font-size: 0.7rem;
-		font-weight: 700;
-		letter-spacing: 0.02em;
+		border-radius: 50%;
+		object-fit: cover;
 		flex-shrink: 0;
 	}
 
@@ -150,7 +166,9 @@ const pageTitle =
 		font-weight: 500;
 		color: var(--text-3);
 		text-decoration: none;
-		transition: color 0.15s, background 0.15s;
+		transition:
+			color 0.15s,
+			background 0.15s;
 	}
 
 	.nav-links a:hover {
@@ -196,11 +214,20 @@ const pageTitle =
 		transition: color 0.15s;
 	}
 
-	.footer-links a:hover { color: var(--accent-2); }
+	.footer-links a:hover {
+		color: var(--accent-2);
+	}
 
 	@media (max-width: 640px) {
-		.logo-text { display: none; }
-		.main { padding: 2rem 1rem; }
-		.footer-inner { flex-direction: column; text-align: center; }
+		.logo-text {
+			display: none;
+		}
+		.main {
+			padding: 2rem 1rem;
+		}
+		.footer-inner {
+			flex-direction: column;
+			text-align: center;
+		}
 	}
 </style>
