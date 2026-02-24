@@ -4,7 +4,6 @@
 ---
 
 <div id="pagefind-search" data-pagefind-ignore>
-	<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
 	<div id="search-container"></div>
 	<div id="search-fallback">
 		<input
@@ -17,36 +16,49 @@
 	</div>
 </div>
 
-<script>
-	async function initSearch() {
+<script is:inline>
+	function initSearch() {
 		const container = document.getElementById("search-container");
 		const fallback = document.getElementById("search-fallback");
 		if (!container) return;
 
-		// Already mounted into this container — don't create a second instance
+		// Already mounted — skip
 		if (container.children.length > 0) {
 			if (fallback) fallback.hidden = true;
 			return;
 		}
 
-		try {
-			// @ts-ignore — generated at build time; string concat prevents bundler resolution
-			const { PagefindUI } = await import(
-				"/pagefind/pagefind-ui" + ".js"
-			);
-			new PagefindUI({
-				element: "#search-container",
-				showSubResults: true,
-				resetStyles: false,
-				showImages: false,
-			});
-			if (fallback) fallback.hidden = true;
-		} catch {
-			if (fallback) fallback.hidden = false;
+		// Load pagefind-ui.css
+		if (!document.querySelector('link[href="/pagefind/pagefind-ui.css"]')) {
+			const link = document.createElement("link");
+			link.rel = "stylesheet";
+			link.href = "/pagefind/pagefind-ui.css";
+			document.head.appendChild(link);
 		}
+
+		// Load pagefind-ui.js as a classic script, then instantiate
+		const script = document.createElement("script");
+		script.src = "/pagefind/pagefind-ui.js";
+		script.onload = function () {
+			if (typeof window.PagefindUI !== "undefined") {
+				new window.PagefindUI({
+					element: "#search-container",
+					showSubResults: true,
+					resetStyles: false,
+					showImages: false,
+				});
+				if (fallback) fallback.hidden = true;
+			} else {
+				if (fallback) fallback.hidden = false;
+			}
+		};
+		script.onerror = function () {
+			if (fallback) fallback.hidden = false;
+		};
+		document.head.appendChild(script);
 	}
 
-	initSearch();
+	document.addEventListener("DOMContentLoaded", initSearch);
 	document.addEventListener("astro:after-swap", initSearch);
 </script>
 
