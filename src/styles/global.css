@@ -1,1 +1,87 @@
 @import "tailwindcss";
+
+/* ─── Theme tokens ───────────────────────────────────────────────────────────── */
+:root {
+  --bg:           #ffffff;
+  --bg-subtle:    #f8fafc;
+  --bg-card:      rgba(255, 255, 255, 0.75);
+  --bg-nav:       rgba(255, 255, 255, 0.82);
+  --border:       rgba(15, 23, 42, 0.08);
+  --border-hover: rgba(37, 99, 235, 0.35);
+  --text:         #0f172a;
+  --text-2:       #334155;
+  --text-3:       #64748b;
+  --accent:       #2563eb;
+  --accent-2:     #3b82f6;
+  --dot:          rgba(15, 23, 42, 0.055);
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:       0 4px 12px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.04);
+  --shadow-lg:    0 20px 40px rgba(0,0,0,.09), 0 8px 16px rgba(0,0,0,.05);
+  /* Pagefind */
+  --pagefind-ui-scale: 0.9;
+  --pagefind-ui-primary: var(--accent);
+  --pagefind-ui-text: var(--text);
+  --pagefind-ui-background: var(--bg-card);
+  --pagefind-ui-border: var(--border);
+  --pagefind-ui-tag: var(--bg-subtle);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 10px;
+  --pagefind-ui-font: 'Inter', system-ui, sans-serif;
+}
+
+.dark {
+  --bg:           #060d1f;
+  --bg-subtle:    #0c1528;
+  --bg-card:      rgba(12, 21, 40, 0.72);
+  --bg-nav:       rgba(6, 13, 31, 0.88);
+  --border:       rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(96, 165, 250, 0.4);
+  --text:         #f1f5f9;
+  --text-2:       #cbd5e1;
+  --text-3:       #64748b;
+  --accent:       #3b82f6;
+  --accent-2:     #60a5fa;
+  --dot:          rgba(255, 255, 255, 0.035);
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.3);
+  --shadow:       0 4px 12px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.3);
+  --shadow-lg:    0 20px 40px rgba(0,0,0,.55), 0 8px 16px rgba(0,0,0,.4);
+}
+
+/* ─── Reset ──────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100dvh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ─── View Transitions ───────────────────────────────────────────────────────── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+::view-transition-old(root) { animation-name: vt-out; }
+::view-transition-new(root) { animation-name: vt-in; }
+
+@keyframes vt-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes vt-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

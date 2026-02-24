@@ -1,30 +1,74 @@
 ---
 // Pagefind UI is generated into /pagefind/ at build time.
-// The search index only exists after a production build — in dev mode the UI will
-// gracefully report no results.
+// In dev mode the UI gracefully reports no results (no index exists yet).
 ---
 
 <div id="pagefind-search" data-pagefind-ignore>
-    <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
-    <div id="search-container"></div>
+	<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+	<div id="search-container"></div>
 </div>
 
 <script>
-    // Dynamically import so it doesn't error in dev where the file doesn't exist
-    async function initSearch() {
-        try {
-            // @ts-ignore — generated at build time
-            const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
-            new PagefindUI({
-                element: '#search-container',
-                showSubResults: true,
-                resetStyles: false,
-            });
-        } catch {
-            const el = document.getElementById('search-container');
-            if (el) el.textContent = 'Search is only available in production builds.';
-        }
-    }
+	async function initSearch() {
+		try {
+			// @ts-ignore — generated at build time
+			const { PagefindUI } = await import('/pagefind/pagefind-ui.js');
+			new PagefindUI({
+				element: '#search-container',
+				showSubResults: true,
+				resetStyles: false,
+				showImages: false,
+			});
+		} catch {
+			// silently skip in dev — no pagefind index built yet
+		}
+	}
 
-    initSearch();
+	initSearch();
+	document.addEventListener('astro:after-swap', initSearch);
 </script>
+
+<style>
+	#pagefind-search {
+		width: 100%;
+	}
+
+	/* Override Pagefind input to match site theme */
+	:global(.pagefind-ui__search-input) {
+		background: var(--bg-card) !important;
+		color: var(--text) !important;
+		border-color: var(--border) !important;
+		font-family: 'Inter', system-ui, sans-serif !important;
+		transition: border-color 0.15s, box-shadow 0.15s !important;
+	}
+
+	:global(.pagefind-ui__search-input:focus) {
+		border-color: var(--accent) !important;
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent) !important;
+		outline: none !important;
+	}
+
+	:global(.pagefind-ui__search-clear) {
+		color: var(--text-3) !important;
+	}
+
+	:global(.pagefind-ui__result) {
+		border-color: var(--border) !important;
+		background: var(--bg-card) !important;
+		border-radius: 10px !important;
+	}
+
+	:global(.pagefind-ui__result-title) {
+		color: var(--text) !important;
+	}
+
+	:global(.pagefind-ui__result-excerpt) {
+		color: var(--text-2) !important;
+	}
+
+	:global(.pagefind-ui mark) {
+		background: color-mix(in srgb, var(--accent) 20%, transparent) !important;
+		color: var(--accent-2) !important;
+		border-radius: 2px;
+	}
+</style>
