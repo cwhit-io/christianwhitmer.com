@@ -13,5 +13,11 @@ export default defineConfig({
     integrations: [sitemap(), mdx()],
     vite: {
         plugins: [tailwindcss()],
+        build: {
+            rollupOptions: {
+                // Pagefind is a runtime-only public URL — not a bundled module
+                external: [/\/pagefind\//],
+            },
+        },
     },
 });
