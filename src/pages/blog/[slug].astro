@@ -109,7 +109,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         font-weight: 800;
         letter-spacing: -0.045em;
         line-height: 1.1;
-        color: var(--text);
+        color: var(--accent);
         margin-bottom: 0.75rem;
     }
 
@@ -180,7 +180,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         font-size: 1.45rem;
         font-weight: 700;
         letter-spacing: -0.025em;
-        color: var(--text);
+        color: var(--accent);
         margin: 2.75rem 0 0.875rem;
         padding-bottom: 0.5rem;
         border-bottom: 1px solid var(--border);
@@ -190,7 +190,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         font-size: 1.15rem;
         font-weight: 700;
         letter-spacing: -0.02em;
-        color: var(--text);
+        color: var(--accent);
         margin: 2rem 0 0.625rem;
     }
 
@@ -206,11 +206,11 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
     }
 
     .prose :global(a) {
-        color: var(--accent-2);
+        color: var(--accent);
         text-decoration: underline;
         text-decoration-color: color-mix(
             in srgb,
-            var(--accent-2) 35%,
+            var(--accent) 35%,
             transparent
         );
         text-underline-offset: 3px;
@@ -218,7 +218,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
     }
 
     .prose :global(a:hover) {
-        text-decoration-color: var(--accent-2);
+        text-decoration-color: var(--accent);
     }
 
     .prose :global(strong) {
