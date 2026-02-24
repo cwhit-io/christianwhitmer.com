@@ -6,8 +6,3 @@ compatibility_flags = ["nodejs_compat"]
 [assets]
 directory = "dist"
 binding = "ASSETS"
-
-[[assets.rules]]
-type = "CompiledContentType"
-globs = ["**/*.wasm"]
-fallthrough = true
