@@ -6,8 +6,7 @@
     "dev": "astro dev",
     "build": "astro build && echo '_worker.js' > dist/.assetsignore && npx pagefind --site dist",
     "preview": "astro preview",
-    "astro": "astro",
-    "deploy": "npm run build && wrangler deploy"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.5",
