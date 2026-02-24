@@ -2,12 +2,18 @@
 
 /* ─── Theme tokens ───────────────────────────────────────────────────────────── */
 :root {
+  /* ── Fonts ── */
+  --font-heading: 'Roboto Slab', Georgia, serif;
+  --font-body: 'Open Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Source Code Pro', 'Cascadia Code', 'Monaco', monospace;
+
   /* Light mode – ministry palette */
   --bg: #F0F0F0;
   --bg-subtle: #FFFFFF;
   /* code blocks & highlight surfaces */
   --bg-card: rgba(255, 255, 255, 0.82);
-  --bg-nav: rgba(240, 240, 240, 0.92);
+  --bg-nav: rgba(224, 224, 224, 0.96);
+  /* #E0E0E0 — darker than #F0F0F0 body */
   --border: #A9A9A9;
   --border-hover: rgba(111, 61, 139, 0.45);
   --text: #333333;
@@ -31,7 +37,7 @@
   --pagefind-ui-tag: var(--bg-subtle);
   --pagefind-ui-border-width: 1px;
   --pagefind-ui-border-radius: 10px;
-  --pagefind-ui-font: 'Inter', system-ui, sans-serif;
+  --pagefind-ui-font: 'Open Sans', system-ui, sans-serif;
 }
 
 .dark {
@@ -40,7 +46,8 @@
   --bg-subtle: #1A1A1A;
   /* code blocks & deep shadow surfaces */
   --bg-card: rgba(26, 26, 26, 0.78);
-  --bg-nav: rgba(51, 51, 51, 0.92);
+  --bg-nav: rgba(34, 34, 34, 0.96);
+  /* #222222 — darker than #333333 body */
   --border: #666666;
   --border-hover: rgba(176, 127, 204, 0.5);
   --text: #E0E0E0;
@@ -76,7 +83,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.7;
