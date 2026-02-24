@@ -6,13 +6,16 @@
 <div id="pagefind-search" data-pagefind-ignore>
 	<div id="search-container"></div>
 	<div id="search-fallback">
-		<input
-			type="search"
-			class="search-placeholder"
-			placeholder="Search posts…"
-			readonly
-			aria-label="Search"
-		/>
+		<div class="search-wrapper">
+			<svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+			<input
+				type="search"
+				class="search-placeholder"
+				placeholder="Search posts…"
+				readonly
+				aria-label="Search"
+			/>
+		</div>
 	</div>
 </div>
 
@@ -65,30 +68,97 @@
 <style>
 	#pagefind-search {
 		width: 100%;
+		position: relative;
+	}
+
+	/* Fallback shown before pagefind loads */
+	.search-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.search-icon {
+		position: absolute;
+		left: 1rem;
+		color: var(--text-3);
+		pointer-events: none;
+		flex-shrink: 0;
+		z-index: 1;
 	}
 
 	.search-placeholder {
 		width: 100%;
-		padding: 0.65rem 1rem;
-		border-radius: 8px;
+		padding: 0.75rem 1rem 0.75rem 2.75rem;
+		border-radius: 12px;
 		border: 1px solid var(--border);
 		background: var(--bg-card);
-		color: var(--text-3);
+		color: var(--text);
 		font-family: "Inter", system-ui, sans-serif;
 		font-size: 0.95rem;
 		cursor: text;
 		box-sizing: border-box;
+		box-shadow: var(--shadow-sm);
+		transition: border-color 0.15s, box-shadow 0.15s;
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 	}
 
-	/* Override Pagefind input to match site theme */
+	.search-placeholder::placeholder {
+		color: var(--text-3);
+	}
+
+	.search-placeholder:focus {
+		outline: none;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+	}
+
+	/* ── Pagefind UI overrides ── */
+	:global(.pagefind-ui) {
+		width: 100%;
+	}
+
+	:global(.pagefind-ui__form) {
+		position: relative;
+	}
+
+	:global(.pagefind-ui__form::before) {
+		content: "";
+		position: absolute;
+		left: 1rem;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 16px;
+		height: 16px;
+		background-color: var(--text-3);
+		-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+		-webkit-mask-size: contain;
+		mask-size: contain;
+		pointer-events: none;
+		z-index: 1;
+	}
+
 	:global(.pagefind-ui__search-input) {
+		width: 100% !important;
+		padding: 0.75rem 3rem 0.75rem 2.75rem !important;
+		border-radius: 12px !important;
+		border: 1px solid var(--border) !important;
 		background: var(--bg-card) !important;
 		color: var(--text) !important;
-		border-color: var(--border) !important;
 		font-family: "Inter", system-ui, sans-serif !important;
-		transition:
-			border-color 0.15s,
-			box-shadow 0.15s !important;
+		font-size: 0.95rem !important;
+		box-shadow: var(--shadow-sm) !important;
+		backdrop-filter: blur(8px) !important;
+		-webkit-backdrop-filter: blur(8px) !important;
+		transition: border-color 0.15s, box-shadow 0.15s !important;
+	}
+
+	:global(.pagefind-ui__search-input::placeholder) {
+		color: var(--text-3) !important;
 	}
 
 	:global(.pagefind-ui__search-input:focus) {
@@ -99,29 +169,82 @@
 
 	:global(.pagefind-ui__search-clear) {
 		color: var(--text-3) !important;
+		background: transparent !important;
+		border-radius: 6px !important;
+		transition: color 0.15s, background 0.15s !important;
+	}
+
+	:global(.pagefind-ui__search-clear:hover) {
+		color: var(--text) !important;
+		background: var(--border) !important;
+	}
+
+	/* Results */
+	:global(.pagefind-ui__results-area) {
+		margin-top: 1rem !important;
+	}
+
+	:global(.pagefind-ui__message) {
+		color: var(--text-3) !important;
+		font-size: 0.875rem !important;
 	}
 
 	:global(.pagefind-ui__result) {
-		border-color: var(--border) !important;
+		border: 1px solid var(--border) !important;
 		background: var(--bg-card) !important;
-		border-radius: 10px !important;
+		border-radius: 12px !important;
+		padding: 1rem 1.25rem !important;
+		box-shadow: var(--shadow-sm) !important;
+		margin-bottom: 0.75rem !important;
+		transition: border-color 0.15s, box-shadow 0.15s !important;
+	}
+
+	:global(.pagefind-ui__result:hover) {
+		border-color: var(--accent) !important;
+		box-shadow: var(--shadow) !important;
+	}
+
+	:global(.pagefind-ui__result-link) {
+		color: var(--text) !important;
+		font-weight: 600 !important;
+		text-decoration: none !important;
+	}
+
+	:global(.pagefind-ui__result-link:hover) {
+		color: var(--accent-2) !important;
 	}
 
 	:global(.pagefind-ui__result-title) {
 		color: var(--text) !important;
+		font-size: 1rem !important;
 	}
 
 	:global(.pagefind-ui__result-excerpt) {
 		color: var(--text-2) !important;
+		font-size: 0.875rem !important;
+		line-height: 1.6 !important;
+		margin-top: 0.25rem !important;
 	}
 
 	:global(.pagefind-ui mark) {
-		background: color-mix(
-			in srgb,
-			var(--accent) 20%,
-			transparent
-		) !important;
+		background: color-mix(in srgb, var(--accent) 20%, transparent) !important;
 		color: var(--accent-2) !important;
-		border-radius: 2px;
+		border-radius: 3px !important;
+		padding: 0 2px !important;
+	}
+
+	:global(.pagefind-ui__button) {
+		border: 1px solid var(--border) !important;
+		background: var(--bg-card) !important;
+		color: var(--text-2) !important;
+		border-radius: 8px !important;
+		font-family: "Inter", system-ui, sans-serif !important;
+		font-size: 0.875rem !important;
+		transition: color 0.15s, border-color 0.15s !important;
+	}
+
+	:global(.pagefind-ui__button:hover) {
+		color: var(--text) !important;
+		border-color: var(--accent) !important;
 	}
 </style>
