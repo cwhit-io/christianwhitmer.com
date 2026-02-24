@@ -6,10 +6,20 @@
 <div id="pagefind-search" data-pagefind-ignore>
 	<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
 	<div id="search-container"></div>
+	<div id="search-fallback" hidden>
+		<input
+			type="search"
+			class="search-placeholder"
+			placeholder="Search posts… (run `npm run build` to enable)"
+			disabled
+			aria-label="Search (unavailable in dev mode)"
+		/>
+	</div>
 </div>
 
 <script>
 	async function initSearch() {
+		const fallback = document.getElementById('search-fallback');
 		try {
 			// @ts-ignore — generated at build time; string concat prevents bundler resolution
 			const { PagefindUI } = await import('/pagefind/pagefind-ui' + '.js');
@@ -19,8 +29,10 @@
 				resetStyles: false,
 				showImages: false,
 			});
+			if (fallback) fallback.hidden = true;
 		} catch {
-			// silently skip in dev — no pagefind index built yet
+			// Show placeholder so visitors know search exists but index isn't built yet
+			if (fallback) fallback.hidden = false;
 		}
 	}
 
@@ -31,6 +43,19 @@
 <style>
 	#pagefind-search {
 		width: 100%;
+	}
+
+	.search-placeholder {
+		width: 100%;
+		padding: 0.65rem 1rem;
+		border-radius: 8px;
+		border: 1px solid var(--border);
+		background: var(--bg-card);
+		color: var(--text-3);
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.95rem;
+		cursor: not-allowed;
+		box-sizing: border-box;
 	}
 
 	/* Override Pagefind input to match site theme */
