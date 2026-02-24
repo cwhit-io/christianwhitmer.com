@@ -21,12 +21,13 @@ const formattedDate = date.toLocaleDateString("en-US", {
 	<a href={`/blog/${slug}`} class="card-link" data-astro-prefetch>
 		{
 			headerImage && (
-				<div class="card-image" transition:name={`post-image-${slug}`}>
+				<div class="card-image">
 					<img
 						src={`/blog/${slug}/${headerImage}`}
 						alt={title}
 						loading="lazy"
 						decoding="async"
+						transition:name={`post-image-${slug}`}
 					/>
 				</div>
 			)
@@ -75,13 +76,13 @@ const formattedDate = date.toLocaleDateString("en-US", {
 			box-shadow 0.25s ease,
 			border-color 0.25s ease;
 		box-shadow: var(--shadow-sm);
-		will-change: transform;
 	}
 
 	.card:hover {
 		transform: translateY(-5px);
 		box-shadow: var(--shadow-lg);
 		border-color: var(--border-hover);
+		will-change: transform;
 	}
 
 	.card-link {

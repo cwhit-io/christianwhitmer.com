@@ -24,7 +24,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
-    <article class="article">
+    <article class="article" data-pagefind-body>
         <header class="article-header">
             <h1 class="article-title" transition:name={`post-title-${slug}`}>
                 {post.data.title}
@@ -42,25 +42,23 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 
         {
             post.data.headerImage && (
-                <div
-                    class="article-image"
-                    transition:name={`post-image-${slug}`}
-                >
+                <div class="article-image">
                     <img
                         src={`/blog/${slug}/${post.data.headerImage}`}
                         alt={post.data.title}
                         loading="eager"
                         decoding="async"
+                        transition:name={`post-image-${slug}`}
                     />
                 </div>
             )
         }
 
-        <div class="prose" data-pagefind-body>
+        <div class="prose">
             <Content />
         </div>
 
-        <footer class="article-footer">
+        <footer class="article-footer" data-pagefind-ignore>
             <a href="/" class="back-btn">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
