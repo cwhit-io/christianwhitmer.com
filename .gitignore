@@ -27,3 +27,6 @@ pnpm-debug.log*
 # ide setting folder
 .idea/
 .vscode/
+
+# plan scripts
+plan/.env
