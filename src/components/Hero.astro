@@ -1,0 +1,78 @@
+---
+import Search from "./Search.astro";
+---
+
+<section class="hero">
+    <div class="hero-badge">Personal Blog</div>
+    <h1 class="hero-title">
+        Thoughts &amp; ideas from<br />
+        <span class="hero-accent">Christian Whitmer</span>
+    </h1>
+    <p class="hero-sub">
+        Exploring web development, technology, and creative projects. Sharing
+        what I learn along the way.
+    </p>
+    <div class="hero-search">
+        <Search />
+    </div>
+</section>
+
+<style>
+    .hero {
+        max-width: 680px;
+        margin: 0 auto 5rem;
+        text-align: center;
+        padding-top: 1.5rem;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        padding: 0.275rem 0.875rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+        border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+        font-family: var(--font-title);
+        font-size: clamp(1.9rem, 4vw, 3rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        color: var(--text-primary);
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-accent {
+        background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-sub {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        max-width: 440px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.75;
+    }
+
+    .hero-search {
+        max-width: 520px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 640px) {
+        .hero {
+            margin-bottom: 3rem;
+            padding-top: 0.5rem;
+        }
+    }
+</style>

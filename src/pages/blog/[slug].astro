@@ -29,13 +29,16 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
             <h1 class="article-title" transition:name={`post-title-${slug}`}>
                 {post.data.title}
             </h1>
+
             <p class="article-subtitle">{post.data.description}</p>
+
             <div class="article-meta">
                 <span>By {post.data.author}</span>
                 <span class="sep" aria-hidden="true">|</span>
                 <time datetime={post.data.date.toISOString()}
                     >{formattedDate}</time
                 >
+
                 {
                     post.data.tags && post.data.tags.length > 0 && (
                         <>
@@ -67,7 +70,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
             )
         }
 
-        <div class="prose">
+        <div class="prose max-w-none">
             <Content />
         </div>
 
@@ -84,9 +87,10 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     aria-hidden="true"
-                    ><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"
-                    ></path></svg
                 >
+                    <path d="m12 19-7-7 7-7"></path>
+                    <path d="M19 12H5"></path>
+                </svg>
                 Back to all posts
             </a>
         </footer>
@@ -94,13 +98,35 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 </Layout>
 
 <style>
-    /* ── Article wrapper ── */
     .article {
         max-width: 70ch;
         margin: 0 auto;
+
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-2);
+        box-shadow: var(--shadow-1);
+
+        padding: var(--space-2);
+        transition:
+            box-shadow var(--trans-1),
+            transform var(--trans-1),
+            border-color var(--trans-1);
     }
 
-    /* ── Header ── */
+    @media (min-width: 768px) {
+        .article {
+            padding: var(--space-4);
+        }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .article:hover {
+            box-shadow: var(--shadow-2);
+            transform: translateY(-2px);
+        }
+    }
+
     .article-header {
         margin-bottom: 2.5rem;
     }
@@ -154,7 +180,6 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         color: var(--text-secondary);
     }
 
-    /* ── Header image ── */
     .article-image {
         margin: 0 0 2.5rem;
         border-radius: var(--radius-2);
@@ -171,14 +196,6 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         display: block;
     }
 
-    /* ── Prose reading measure ── */
-    /* Global .prose :where(...) selectors in global.css handle body copy.   */
-    /* Only article-specific layout concerns live here.                       */
-    .prose {
-        margin-top: 0;
-    }
-
-    /* ── Footer ── */
     .article-footer {
         margin-top: 4rem;
         padding-top: 2rem;
@@ -189,6 +206,12 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
+
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-1);
+        background: var(--card-bg);
+
         font-size: 0.875rem;
         font-weight: 600;
         color: var(--text-secondary);

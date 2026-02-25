@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
 
 /* ─── Shared / theme-independent tokens ─────────────────────────────────────── */
 :root {
@@ -177,12 +179,12 @@ body>* {
   z-index: 1;
 }
 
-/* ─── Header gradient overlay ────────────────────────────────────────────────── */
-header {
+/* ─── Header gradient overlay (SITE HEADER ONLY) ─────────────────────────────── */
+.site-header {
   position: relative;
 }
 
-header::after {
+.site-header::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -192,7 +194,7 @@ header::after {
 }
 
 /* Header children above the overlay */
-header>* {
+.site-header>* {
   position: relative;
   z-index: 1;
 }
