@@ -1,67 +1,36 @@
 import textwrap
 
 
-# Representative excerpt from a hand-crafted post — teaches voice, structure, AND formatting conventions.
-# Shows: bold inline text, bold bullet leads, ### sub-sections, --- separators, blockquote examples, short paragraphs.
+# Keep the example post short and style-focused so it teaches voice without biasing topics too hard.
+# (Cybersecurity is fine, but we avoid overly security-specific patterns that can “bleed” into other posts.)
 EXAMPLE_POST = textwrap.dedent("""
-    It's five minutes before service. A first-time visitor walks up to your Welcome Desk and asks, "Do you take online giving?" Whether your church is just starting with digital giving or cleaning up a patchwork of tools, the goal is the same: **make giving easy for people and safe for your ministry**.
+    You lock the front doors and count the offering with care—but what about the digital doors to your church? From email scams to lost laptops, ministries face real cyber threats, often with fewer resources. The good news: a handful of practical habits can dramatically reduce risk and protect the people you serve. Here’s how to strengthen your church’s cybersecurity without becoming a full-time IT professional.
 
-    This guide will help you choose practical giving paths, reduce friction, and protect donor data—all without turning you into an IT professional.
+    ## Why Cybersecurity Matters for Ministries
 
-    ## Why this matters
+    Churches steward sensitive information every day—donor records, prayer requests, counseling notes, children’s check-in details, and volunteer background checks. A breach can harm trust, disrupt ministry operations, and put people at risk. Cybersecurity isn’t about fear; it’s about faithful stewardship through simple, repeatable habits.
 
-    Generosity is part of worship, not just a financial transaction. When giving feels confusing, slow, or risky, people hesitate—even if they want to support the mission.
+    ## 1) Lock Down Accounts with Strong Access Controls
 
-    Clear, secure digital paths:
+    Think of accounts (email, giving, finance systems, cloud storage, your church management system) like master keys. Protect them like you would a key ring that opens every room.
 
-    - Let busy families give from their seats
-    - Support recurring giving for steadier planning
-    - Meet people where they already are: **on their phones**
+    - **Turn on multi-factor authentication (MFA) everywhere.** MFA blocks most account takeovers even if a password leaks.
+    - **Use a password manager** so staff aren't reusing passwords across tools.
+    - **Right-size permissions by role**, and review access quarterly.
 
-    ---
+    ## Where to Begin
 
-    ## Choose simple giving paths people will actually use
+    - **This week:** Turn on MFA for email and finance accounts.
+    - **Next:** Set up a password manager and remove shared logins.
+    - **Then:** Write a one-page "what to do if we get hacked" plan and make sure backups are real by testing one restore.
 
-    Aim for **2–3 primary channels** that fit your congregation, then present them consistently in print, on screen, and online.
+    ## Encouragement for the Journey
 
-    ### 1) A clean giving page with a short, memorable link
-
-    - Use something like **`yourchurch.org/give`** and ensure it's mobile-friendly
-    - Offer **one-time** and **recurring** gifts with a few clearly named funds: *General, Missions, Benevolence*
-
-    ### 2) Text-to-give or QR codes for fast entry
-
-    - **Text-to-give:** put the number on slides and seatback cards
-    - **QR codes:** go straight to the giving page (no detours)
-
-    > **Example:** During Christmas services, you run a slide with `yourchurch.org/give` and a QR code. Greeters hand out cards with the same link, and the bulletin points to the simplest path.
-
-    ---
-
-    ## A 30-Day Starter Plan
-
-    ### Week 1 — Decide and prepare
-
-    - Choose your platform (e.g., Planning Center Giving, Tithe.ly, Pushpay, Breeze)
-    - Enable payment methods: **card + ACH**
-    - Set staff roles and enable **MFA**
-
-    ### Week 2 — Build and secure
-
-    - **Publish the short link** and create QR codes that land directly on the giving page
-    - Test on multiple phones and networks
-
-    ---
-
-    ## Encouragement for the journey
-
-    Moving to digital tithing isn't about replacing envelopes; it's about removing barriers to generosity.
-
-    Start small, test with real people, and celebrate progress. Over time, online giving becomes a smooth, trustworthy part of your worship rhythm—freeing you to focus on the mission and the people you serve.
+    Cybersecurity doesn’t have to be intimidating or expensive. Start with basics, involve your team, and celebrate progress. When you lock your digital doors and teach wise habits, you create a safer space for people to worship, serve, and grow.
 """).strip()
 
 
-def _clean_tags str:
+def _clean_tags(tags_raw: str) -> str:
     """
     Normalize tags from CSV-ish formats like:
     - "['a', 'b']"
@@ -191,35 +160,81 @@ def build_image_prompt(row: dict) -> str:
     Image prompt for an editorial hero image. Optimized to avoid text/logos/screens
     that frequently ruin hero images.
     """
+    import random
+
     title = row.get("Title", "").strip()
     topic = row.get("Topic", "").strip()
     desc = row.get("Description", "").strip()
 
+    # Add variation: randomize scene, time of day, or mood
+    scene_options = [
+        "worship service in progress",
+        "volunteers setting up tech",
+        "youth group gathering",
+        "quiet early morning sanctuary",
+        "busy church lobby",
+        "outdoor community event",
+        "midweek rehearsal",
+        "evening prayer meeting",
+        "children's ministry check-in",
+        "AV team at work",
+        "pastor greeting people",
+        "small group discussion",
+        "musicians preparing on stage",
+    ]
+    time_options = [
+        "morning light",
+        "afternoon sun",
+        "golden hour",
+        "evening",
+        "rainy day",
+        "sunny day",
+        "overcast",
+        "winter",
+        "spring",
+        "summer",
+        "autumn",
+    ]
+    mood_options = [
+        "joyful",
+        "peaceful",
+        "focused",
+        "welcoming",
+        "reflective",
+        "energetic",
+        "calm",
+        "hopeful",
+    ]
+    scene = random.choice(scene_options)
+    time = random.choice(time_options)
+    mood = random.choice(mood_options)
+
     return textwrap.dedent(f"""
-        Professional editorial hero image for a church technology blog post.
+      Professional editorial hero image for a church technology blog post.
 
-        Topic: {topic}
-        Title: {title}
-        Context: {desc}
+      Topic: {topic}
+      Title: {title}
+      Context: {desc}
 
-        Style:
-        - Photorealistic editorial photography
-        - Modern, warm lighting, clean composition
-        - Approachable, hopeful, practical mood (not corporate or sterile)
-        - Contemporary church environment with subtle technology cues
-        - Prefer environmental scenes over isolated objects
+      Scene: {scene}, {time}, {mood} mood
 
-        Avoid:
-        - Any text, words, letters, signage, captions, overlays, watermarks
-        - Readable screens (phones, laptops, projectors, monitors) or UI elements
-        - Brand logos, trademarks, or identifiable product branding
-        - Staged “stock photo” vibes (handshakes, boardrooms, forced posing)
-        - Overly literal interpretations (e.g., giant padlock hovering over a church)
+      Style:
+      - Photorealistic editorial photography
+      - Modern, clean composition
+      - Contemporary church environment with subtle technology cues
+      - Prefer environmental scenes over isolated objects
 
-        Technical requirements:
-        - Aspect ratio 16:9 (1344x768)
-        - High quality, suitable as a website hero/header image
+      Avoid:
+      - Any text, words, letters, signage, captions, overlays, watermarks
+      - Readable screens (phones, laptops, projectors, monitors) or UI elements
+      - Brand logos, trademarks, or identifiable product branding
+      - Staged “stock photo” vibes (handshakes, boardrooms, forced posing)
+      - Overly literal interpretations (e.g., giant padlock hovering over a church)
 
-        Visual reference:
-        - Documentary/editorial look: authentic church setting + subtle tech, calm and competent.
+      Technical requirements:
+      - Aspect ratio 16:9 (1344x768)
+      - High quality, suitable as a website hero/header image
+
+      Visual reference:
+      - Documentary/editorial look: authentic church setting + subtle tech, {mood}.
     """).strip()
