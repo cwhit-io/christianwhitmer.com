@@ -1,0 +1,261 @@
+---
+// Nav search: compact icon button → <dialog> modal with Pagefind UI
+---
+
+<button
+    class="nav-search-btn"
+    id="nav-search-trigger"
+    aria-label="Search"
+    aria-controls="search-dialog"
+    aria-expanded="false"
+>
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+    >
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+    </svg>
+</button>
+
+<dialog id="search-dialog" class="search-dialog" aria-label="Search">
+    <div class="search-dialog-inner">
+        <div class="search-dialog-header">
+            <span class="search-dialog-label">Search posts</span>
+            <button
+                class="search-close-btn"
+                id="search-close-btn"
+                aria-label="Close search"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="nav-search-container"></div>
+        <div id="nav-search-fallback" hidden>
+            <p class="search-unavailable">
+                Search index not available in dev mode — run <code
+                    >npm run build</code
+                > first.
+            </p>
+        </div>
+    </div>
+</dialog>
+
+<script is:inline>
+    (function () {
+        const trigger = document.getElementById("nav-search-trigger");
+        const dialog = document.getElementById("search-dialog");
+        const closeBtn = document.getElementById("search-close-btn");
+        let searchMounted = false;
+
+        function mountSearch() {
+            if (searchMounted) return;
+            const container = document.getElementById("nav-search-container");
+            const fallback = document.getElementById("nav-search-fallback");
+            if (!container) return;
+
+            if (
+                !document.querySelector(
+                    'link[href="/pagefind/pagefind-ui.css"]',
+                )
+            ) {
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = "/pagefind/pagefind-ui.css";
+                document.head.appendChild(link);
+            }
+
+            const script = document.createElement("script");
+            script.src = "/pagefind/pagefind-ui.js";
+            script.onload = function () {
+                if (typeof window.PagefindUI !== "undefined") {
+                    new window.PagefindUI({
+                        element: "#nav-search-container",
+                        showSubResults: true,
+                        resetStyles: false,
+                        showImages: false,
+                    });
+                    searchMounted = true;
+                    if (fallback) fallback.hidden = true;
+                } else {
+                    if (fallback) fallback.hidden = false;
+                }
+            };
+            script.onerror = function () {
+                if (fallback) fallback.hidden = false;
+            };
+            document.head.appendChild(script);
+        }
+
+        function openDialog() {
+            if (!dialog) return;
+            mountSearch();
+            dialog.showModal();
+            trigger.setAttribute("aria-expanded", "true");
+            // Focus first input inside dialog
+            requestAnimationFrame(() => {
+                const input = dialog.querySelector("input");
+                if (input) input.focus();
+            });
+        }
+
+        function closeDialog() {
+            if (!dialog) return;
+            dialog.close();
+            trigger.setAttribute("aria-expanded", "false");
+        }
+
+        if (trigger) trigger.addEventListener("click", openDialog);
+        if (closeBtn) closeBtn.addEventListener("click", closeDialog);
+
+        // Close on backdrop click
+        if (dialog) {
+            dialog.addEventListener("click", (e) => {
+                if (e.target === dialog) closeDialog();
+            });
+        }
+
+        // Re-attach after ViewTransitions swap
+        document.addEventListener("astro:after-swap", () => {
+            searchMounted = false;
+        });
+    })();
+</script>
+
+<style>
+    /* ── Trigger button ── */
+    .nav-search-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        flex-shrink: 0;
+        padding: 0;
+        transition:
+            color var(--trans-1),
+            background var(--trans-1);
+    }
+
+    .nav-search-btn:hover {
+        color: var(--text-primary);
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+
+    /* ── Dialog / modal ── */
+    .search-dialog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        overflow: visible;
+    }
+
+    .search-dialog::backdrop {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    .search-dialog-inner {
+        position: absolute;
+        top: 72px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(640px, calc(100vw - 2rem));
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-2);
+        box-shadow: var(--shadow-2);
+        overflow: hidden;
+    }
+
+    .search-dialog-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem 0.5rem;
+        border-bottom: 1px solid var(--divider);
+    }
+
+    .search-dialog-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .search-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-1);
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 0;
+        transition:
+            color var(--trans-1),
+            background var(--trans-1);
+    }
+
+    .search-close-btn:hover {
+        color: var(--text-primary);
+        background: var(--code-bg);
+    }
+
+    #nav-search-container {
+        padding: 0.5rem;
+    }
+
+    .search-unavailable {
+        padding: 1rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .search-unavailable code {
+        font-family: var(--font-code);
+        font-size: 0.8em;
+        background: var(--code-bg);
+        padding: 0.1em 0.4em;
+        border-radius: var(--radius-1);
+    }
+</style>

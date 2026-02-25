@@ -367,6 +367,27 @@ samp {
   font-weight: 600;
 }
 
+/* ─── Shiki dual-theme: map data-theme → CSS variables ───────────────────────── */
+/* defaultColor:false means Astro outputs --shiki-light/dark on each span;       */
+/* we activate the right set with the data-theme attribute on <html>              */
+:root[data-theme="light"] .astro-code,
+:root[data-theme="light"] .astro-code span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+:root[data-theme="dark"] .astro-code,
+:root[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
+
+/* Mobile: prevent code blocks from blowing out the layout */
+.prose :where(pre) {
+  -webkit-overflow-scrolling: touch;
+  white-space: pre;
+}
+
 /* ─── Reduced motion ─────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
 

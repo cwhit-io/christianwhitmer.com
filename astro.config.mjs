@@ -11,12 +11,22 @@ export default defineConfig({
     output: 'server',
     adapter: cloudflare({ session: false }),
     integrations: [sitemap(), mdx()],
+    markdown: {
+        shikiConfig: {
+            themes: {
+                light: 'github-light',
+                dark: 'one-dark-pro',
+            },
+            wrap: false,
+            defaultColor: false,
+        },
+    },
     vite: {
         plugins: [tailwindcss()],
         build: {
             rollupOptions: {
-                // Pagefind is a runtime-only public URL — not a bundled module
-                external: [/\/pagefind\//],
+                // These are build-time-only (prerender) — keep out of the Worker bundle
+                external: [/\/pagefind\//, 'satori', /^@resvg/, /^resvg/],
             },
         },
     },
