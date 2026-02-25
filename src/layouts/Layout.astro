@@ -17,7 +17,7 @@ const {
 const pageTitle =
 	title === "Christian Whitmer" ? title : `${title} — Christian Whitmer`;
 
-const path = Astro.url.pathname;
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <!doctype html>
