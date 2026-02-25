@@ -2,6 +2,8 @@ import type { APIContext } from "astro";
 import { getCollection } from "astro:content";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 
 export const prerender = true;
 
@@ -13,27 +15,19 @@ export async function getStaticPaths() {
     }));
 }
 
-// Cache font at module level so it's only fetched once per build
+// Load font once at module init — reads the WOFF file bundled with @fontsource
+// (satori accepts TTF, OTF, and WOFF but NOT WOFF2)
 let cachedFont: ArrayBuffer | null = null;
 
-async function loadFont(): Promise<ArrayBuffer | null> {
+function loadFont(): ArrayBuffer | null {
     if (cachedFont) return cachedFont;
     try {
-        // Request CSS with an old UA so Google Fonts returns TTF (not WOFF2)
-        const css = await fetch(
-            "https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700",
-            {
-                headers: {
-                    "User-Agent":
-                        "Mozilla/4.0 (compatible; MSIE 4.0; Windows NT)",
-                },
-            },
-        ).then((r) => r.text());
-
-        const urlMatch = css.match(/src: url\(([^)]+)\)/);
-        if (urlMatch?.[1]) {
-            cachedFont = await fetch(urlMatch[1]).then((r) => r.arrayBuffer());
-        }
+        const require = createRequire(import.meta.url);
+        const fontPath = require.resolve(
+            "@fontsource/roboto-slab/files/roboto-slab-latin-700-normal.woff",
+        );
+        const buf = readFileSync(fontPath);
+        cachedFont = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
     } catch {
         // Build continues without custom font — satori falls back to sans-serif
     }
@@ -67,7 +61,7 @@ function h(
 export async function GET({ props }: APIContext) {
     const { post } = props as any;
 
-    const font = await loadFont();
+    const font = loadFont();
 
     const title: string = post.data.title ?? "Untitled";
     const description: string = post.data.description ?? "";
