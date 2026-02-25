@@ -16,6 +16,8 @@ const {
 
 const pageTitle =
 	title === "Christian Whitmer" ? title : `${title} — Christian Whitmer`;
+
+const path = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -81,9 +83,20 @@ const pageTitle =
 				</a>
 				<div class="nav-right">
 					<ul class="nav-links" role="list">
-						<li><a href="/">Home</a></li>
+						<li>
+							<a
+								href="/"
+								aria-current={path === "/" ? "page" : undefined}
+								>Home</a>
+						</li>
 						<li><a href="/#blog">Blog</a></li>
-						<li><a href="/about">About</a></li>
+						<li>
+							<a
+								href="/about"
+								aria-current={path === "/about"
+									? "page"
+									: undefined}>About</a>
+						</li>
 					</ul>
 					<ThemeToggle />
 					<button
@@ -101,9 +114,20 @@ const pageTitle =
 			</nav>
 			<div class="nav-mobile" id="nav-mobile" aria-hidden="true">
 				<ul role="list">
-					<li><a href="/">Home</a></li>
+					<li>
+						<a
+							href="/"
+							aria-current={path === "/" ? "page" : undefined}
+							>Home</a>
+					</li>
 					<li><a href="/#blog">Blog</a></li>
-					<li><a href="/about">About</a></li>
+					<li>
+						<a
+							href="/about"
+							aria-current={path === "/about"
+								? "page"
+								: undefined}>About</a>
+					</li>
 				</ul>
 			</div>
 		</header>
@@ -153,19 +177,17 @@ const pageTitle =
 </html>
 
 <style>
-	/* ── Site header — always-dark glassy panel ── */
+	/* ── Site header ── */
 	.site-header {
 		position: sticky;
 		top: 0;
 		z-index: 50;
 		background: var(--header-bg);
-		border-bottom: 1px solid var(--subtle);
-		backdrop-filter: blur(24px) saturate(150%);
-		-webkit-backdrop-filter: blur(24px) saturate(150%);
-		box-shadow: var(--shadow);
+		border-bottom: 2px solid var(--accent);
+		box-shadow: var(--shadow-1);
 		transition:
-			background 0.3s ease,
-			border-color 0.3s ease;
+			background var(--trans-1),
+			border-color var(--trans-1);
 	}
 
 	.nav {
@@ -195,24 +217,25 @@ const pageTitle =
 	}
 
 	.logo-mark {
-		width: 34px;
-		height: 34px;
+		width: 36px;
+		height: 36px;
 		border-radius: 50%;
 		object-fit: cover;
 		flex-shrink: 0;
-		box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent);
+		border: 2px solid var(--accent);
 	}
 
 	.logo-text {
-		font-family: "Fraunces", Georgia, serif;
-		font-size: 1.05rem;
-		font-weight: 800;
-		letter-spacing: -0.02em;
+		font-family: var(--font-title);
+		font-size: 1.1rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
 		line-height: 1;
-		background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
+		color: var(--text-primary);
+	}
+
+	.logo:hover .logo-text {
+		color: var(--accent);
 	}
 
 	/* ── Desktop nav links ── */
@@ -233,7 +256,7 @@ const pageTitle =
 		padding: 0.375rem 0.8rem;
 		border-radius: 6px;
 		font-size: 0.875rem;
-		font-weight: 500;
+		font-weight: 600;
 		color: var(--text-secondary);
 		text-decoration: none;
 		transition:
@@ -243,7 +266,12 @@ const pageTitle =
 
 	.nav-links a:hover {
 		color: var(--text-primary);
-		background: color-mix(in srgb, var(--accent) 12%, transparent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+	}
+
+	.nav-links a[aria-current="page"] {
+		color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
 	}
 
 	/* ── Hamburger button ── */
@@ -327,7 +355,7 @@ const pageTitle =
 		padding: 0.625rem 0.875rem;
 		border-radius: 8px;
 		font-size: 0.9rem;
-		font-weight: 500;
+		font-weight: 600;
 		color: var(--text-secondary);
 		text-decoration: none;
 		transition:
@@ -337,7 +365,12 @@ const pageTitle =
 
 	.nav-mobile a:hover {
 		color: var(--text-primary);
-		background: color-mix(in srgb, var(--accent) 12%, transparent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+	}
+
+	.nav-mobile a[aria-current="page"] {
+		color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
 	}
 
 	/* ── Main & Footer ── */
@@ -363,7 +396,7 @@ const pageTitle =
 		gap: 1rem;
 		flex-wrap: wrap;
 		font-size: 0.82rem;
-		color: var(--text-3);
+		color: var(--text-secondary);
 	}
 
 	.footer-links {
@@ -372,13 +405,13 @@ const pageTitle =
 	}
 
 	.footer-links a {
-		color: var(--text-3);
+		color: var(--text-secondary);
 		text-decoration: none;
-		transition: color 0.15s;
+		transition: color var(--trans-1);
 	}
 
 	.footer-links a:hover {
-		color: var(--accent-2);
+		color: var(--accent);
 	}
 
 	/* ── ThemeToggle override — scoped to header context ── */
