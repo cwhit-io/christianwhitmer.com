@@ -41,27 +41,31 @@ const pageTitle =
 			href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Roboto+Slab:wght@700;800&family=Source+Code+Pro:wght@400;500&display=swap"
 			rel="stylesheet"
 		/>
-		<!-- Prevent dark mode flash before ViewTransitions -->
+		<!-- Prevent flash of incorrect theme (runs synchronously before first paint) -->
 		<script is:inline>
-			const stored = localStorage.getItem("theme");
-			const prefersDark = window.matchMedia(
-				"(prefers-color-scheme: dark)",
-			).matches;
-			if (stored === "dark" || (!stored && prefersDark)) {
-				document.documentElement.classList.add("dark");
-			}
-			// Persist theme across ViewTransitions page swaps
-			document.addEventListener("astro:before-swap", (e) => {
-				if (document.documentElement.classList.contains("dark")) {
-					e.newDocument.documentElement.classList.add("dark");
-				} else {
-					e.newDocument.documentElement.classList.remove("dark");
-				}
+			(function () {
+				var stored = localStorage.getItem("theme");
+				var prefersDark = window.matchMedia(
+					"(prefers-color-scheme: dark)",
+				).matches;
+				var theme =
+					stored === "dark" || stored === "light"
+						? stored
+						: prefersDark
+							? "dark"
+							: "light";
+				document.documentElement.dataset.theme = theme;
+			})();
+			// Keep data-theme in sync across ViewTransitions page swaps
+			document.addEventListener("astro:before-swap", function (e) {
+				e.newDocument.documentElement.dataset.theme =
+					document.documentElement.dataset.theme;
 			});
 		</script>
 		<ViewTransitions />
 	</head>
 	<body>
+		<a href="#main-content" class="skip-link">Skip to content</a>
 		<header class="site-header">
 			<nav class="nav">
 				<a href="/" class="logo" aria-label="Christian Whitmer — home">
@@ -129,7 +133,7 @@ const pageTitle =
 			);
 		</script>
 
-		<main class="main">
+		<main class="main" id="main-content">
 			<slot />
 		</main>
 
@@ -230,16 +234,16 @@ const pageTitle =
 		border-radius: 6px;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: rgba(255, 255, 255, 0.65);
+		color: var(--text-secondary);
 		text-decoration: none;
 		transition:
-			color 0.15s,
-			background 0.15s;
+			color var(--trans-1),
+			background var(--trans-1);
 	}
 
 	.nav-links a:hover {
-		color: #fff;
-		background: rgba(139, 92, 246, 0.18);
+		color: var(--text-primary);
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
 	}
 
 	/* ── Hamburger button ── */
@@ -251,31 +255,31 @@ const pageTitle =
 		gap: 5px;
 		width: 36px;
 		height: 36px;
-		background: rgba(139, 92, 246, 0.12);
-		border: 1px solid rgba(139, 92, 246, 0.22);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
 		border-radius: 8px;
 		cursor: pointer;
 		padding: 0;
 		transition:
-			background 0.15s,
-			border-color 0.15s;
+			background var(--trans-1),
+			border-color var(--trans-1);
 		flex-shrink: 0;
 	}
 
 	.nav-burger:hover {
-		background: rgba(139, 92, 246, 0.24);
-		border-color: rgba(139, 92, 246, 0.4);
+		background: color-mix(in srgb, var(--accent) 20%, transparent);
+		border-color: color-mix(in srgb, var(--accent) 40%, transparent);
 	}
 
 	.burger-bar {
 		display: block;
 		width: 16px;
 		height: 2px;
-		background: rgba(255, 255, 255, 0.85);
+		background: var(--text-primary);
 		border-radius: 2px;
 		transition:
-			transform 0.2s ease,
-			opacity 0.2s ease;
+			transform var(--trans-1),
+			opacity var(--trans-1);
 	}
 
 	/* Animate burger → X */
@@ -300,7 +304,7 @@ const pageTitle =
 		transition:
 			max-height 0.25s ease,
 			padding 0.25s ease;
-		border-top: 1px solid rgba(139, 92, 246, 0.12);
+		border-top: 1px solid var(--divider);
 	}
 
 	.nav-mobile.is-open {
@@ -324,16 +328,16 @@ const pageTitle =
 		border-radius: 8px;
 		font-size: 0.9rem;
 		font-weight: 500;
-		color: rgba(255, 255, 255, 0.72);
+		color: var(--text-secondary);
 		text-decoration: none;
 		transition:
-			color 0.15s,
-			background 0.15s;
+			color var(--trans-1),
+			background var(--trans-1);
 	}
 
 	.nav-mobile a:hover {
-		color: #fff;
-		background: rgba(139, 92, 246, 0.18);
+		color: var(--text-primary);
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
 	}
 
 	/* ── Main & Footer ── */
@@ -345,10 +349,8 @@ const pageTitle =
 	}
 
 	.site-footer {
-		border-top: 1px solid var(--border);
-		background: var(--bg-nav);
-		backdrop-filter: blur(20px);
-		-webkit-backdrop-filter: blur(20px);
+		border-top: 1px solid var(--divider);
+		background: var(--header-bg);
 	}
 
 	.footer-inner {
@@ -379,17 +381,17 @@ const pageTitle =
 		color: var(--accent-2);
 	}
 
-	/* ── ThemeToggle override — always dark header context ── */
+	/* ── ThemeToggle override — scoped to header context ── */
 	:global(.site-header #theme-toggle) {
-		border-color: rgba(139, 92, 246, 0.22);
-		color: rgba(255, 255, 255, 0.65);
-		background: rgba(139, 92, 246, 0.1);
+		border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+		color: var(--text-secondary);
+		background: color-mix(in srgb, var(--accent) 8%, transparent);
 	}
 
 	:global(.site-header #theme-toggle:hover) {
-		color: #fff;
-		background: rgba(139, 92, 246, 0.22);
-		border-color: rgba(139, 92, 246, 0.4);
+		color: var(--text-primary);
+		background: color-mix(in srgb, var(--accent) 18%, transparent);
+		border-color: color-mix(in srgb, var(--accent) 40%, transparent);
 	}
 
 	/* ── Mobile breakpoint ── */

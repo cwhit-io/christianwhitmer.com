@@ -65,24 +65,37 @@ const formattedDate = date.toLocaleDateString("en-US", {
 
 <style>
 	.card {
-		background: var(--bg-card);
+		background: var(--card-bg);
 		border: 1px solid var(--border);
-		border-radius: 16px;
+		border-radius: var(--radius-2);
 		overflow: hidden;
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
 		transition:
-			transform 0.25s ease,
-			box-shadow 0.25s ease,
-			border-color 0.25s ease;
-		box-shadow: var(--shadow-sm);
+			transform var(--trans-1),
+			box-shadow var(--trans-1),
+			border-color var(--trans-1);
+		box-shadow: var(--shadow-1);
 	}
 
-	.card:hover {
-		transform: translateY(-5px);
-		box-shadow: var(--shadow-lg);
-		border-color: var(--border-hover);
-		will-change: transform;
+	@media (hover: hover) and (pointer: fine) {
+		.card:hover {
+			transform: translateY(-2px);
+			box-shadow: var(--shadow-2);
+			border-color: var(--accent);
+			will-change: transform;
+		}
+
+		.card:hover .card-image img {
+			transform: scale(1.05);
+		}
+
+		.card:hover .card-title {
+			color: var(--accent);
+		}
+
+		.card:hover .card-cta {
+			opacity: 1;
+			transform: translateX(0);
+		}
 	}
 
 	.card-link {
@@ -95,7 +108,7 @@ const formattedDate = date.toLocaleDateString("en-US", {
 	.card-image {
 		aspect-ratio: 16 / 9;
 		overflow: hidden;
-		background: var(--bg-subtle);
+		background: var(--code-bg);
 	}
 
 	.card-image img {
@@ -103,10 +116,6 @@ const formattedDate = date.toLocaleDateString("en-US", {
 		height: 100%;
 		object-fit: cover;
 		transition: transform 0.4s ease;
-	}
-
-	.card:hover .card-image img {
-		transform: scale(1.05);
 	}
 
 	.card-body {
@@ -118,7 +127,7 @@ const formattedDate = date.toLocaleDateString("en-US", {
 
 	.card-meta {
 		font-size: 0.775rem;
-		color: var(--text-3);
+		color: var(--text-secondary);
 		display: flex;
 		align-items: center;
 		gap: 0.375rem;
@@ -134,17 +143,14 @@ const formattedDate = date.toLocaleDateString("en-US", {
 		font-weight: 650;
 		letter-spacing: -0.025em;
 		line-height: 1.35;
-		color: var(--text);
-		transition: color 0.15s;
-	}
-
-	.card:hover .card-title {
-		color: var(--accent-2);
+		color: var(--text-primary);
+		font-family: var(--font-title);
+		transition: color var(--trans-1);
 	}
 
 	.card-desc {
 		font-size: 0.875rem;
-		color: var(--text-2);
+		color: var(--text-secondary);
 		line-height: 1.6;
 		margin-top: 0.25rem;
 		display: -webkit-box;
@@ -159,17 +165,12 @@ const formattedDate = date.toLocaleDateString("en-US", {
 		gap: 0.3rem;
 		font-size: 0.8rem;
 		font-weight: 600;
-		color: var(--accent-2);
+		color: var(--accent);
 		margin-top: 0.625rem;
 		opacity: 0;
 		transform: translateX(-6px);
 		transition:
-			opacity 0.2s ease,
-			transform 0.2s ease;
-	}
-
-	.card:hover .card-cta {
-		opacity: 1;
-		transform: translateX(0);
+			opacity var(--trans-1),
+			transform var(--trans-1);
 	}
 </style>

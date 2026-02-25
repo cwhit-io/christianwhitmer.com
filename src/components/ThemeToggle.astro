@@ -1,29 +1,56 @@
 ---
+
 ---
 
 <button id="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
-	<svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-		<circle cx="12" cy="12" r="4"/>
-		<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+	<svg
+		class="icon-sun"
+		xmlns="http://www.w3.org/2000/svg"
+		width="16"
+		height="16"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<circle cx="12" cy="12" r="4"></circle>
+		<path
+			d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+		></path>
 	</svg>
-	<svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-		<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+	<svg
+		class="icon-moon"
+		xmlns="http://www.w3.org/2000/svg"
+		width="16"
+		height="16"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
 	</svg>
 </button>
 
 <script>
 	function init() {
-		const btn = document.getElementById('theme-toggle');
+		const btn = document.getElementById("theme-toggle");
 		if (!btn) return;
 
-		const isDark = () => document.documentElement.classList.contains('dark');
+		const isDark = () => document.documentElement.dataset.theme === "dark";
 
-		const sync = () => btn.setAttribute('aria-pressed', String(isDark()));
+		const sync = () => btn.setAttribute("aria-pressed", String(isDark()));
 
-		btn.addEventListener('click', () => {
+		btn.addEventListener("click", () => {
 			const dark = !isDark();
-			document.documentElement.classList.toggle('dark', dark);
-			localStorage.setItem('theme', dark ? 'dark' : 'light');
+			document.documentElement.dataset.theme = dark ? "dark" : "light";
+			localStorage.setItem("theme", dark ? "dark" : "light");
 			sync();
 		});
 
@@ -31,7 +58,7 @@
 	}
 
 	init();
-	document.addEventListener('astro:after-swap', init);
+	document.addEventListener("astro:after-swap", init);
 </script>
 
 <style>
@@ -44,21 +71,30 @@
 		border-radius: 8px;
 		border: 1px solid var(--border);
 		background: transparent;
-		color: var(--text-3);
+		color: var(--text-secondary);
 		cursor: pointer;
-		transition: color 0.15s, background 0.15s, border-color 0.15s;
+		transition:
+			color var(--trans-1),
+			background var(--trans-1),
+			border-color var(--trans-1);
 		flex-shrink: 0;
 	}
 
 	button:hover {
-		color: var(--text);
-		background: var(--border);
+		color: var(--text-primary);
+		background: var(--code-bg);
 	}
 
 	/* Light mode: show sun, hide moon */
-	.icon-moon { display: none; }
+	.icon-moon {
+		display: none;
+	}
 
 	/* Dark mode: hide sun, show moon */
-	:global(.dark) .icon-sun  { display: none; }
-	:global(.dark) .icon-moon { display: block; }
+	:global([data-theme="dark"]) .icon-sun {
+		display: none;
+	}
+	:global([data-theme="dark"]) .icon-moon {
+		display: block;
+	}
 </style>
