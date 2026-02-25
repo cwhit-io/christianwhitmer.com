@@ -73,24 +73,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         </div>
 
         <footer class="article-footer" data-pagefind-ignore>
-            <a href="/" class="back-btn">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                >
-                    <path d="m12 19-7-7 7-7"></path>
-                    <path d="M19 12H5"></path>
-                </svg>
-                Back to all posts
-            </a>
+            <a href="/" class="back-btn">← Back to all posts</a>
         </footer>
     </article>
 </Layout>
@@ -201,40 +184,21 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 
     /* ── Footer ── */
     .article-footer {
-        margin-top: 4rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--divider);
+        margin-top: 3.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid
+            color-mix(in srgb, var(--divider) 40%, transparent);
     }
 
     .back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.45rem 0.9rem;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-1);
-        background: transparent;
         font-size: 0.875rem;
-        font-weight: 600;
+        font-weight: 500;
         color: var(--text-secondary);
         text-decoration: none;
-        transition:
-            color var(--trans-1),
-            background var(--trans-1),
-            border-color var(--trans-1);
-    }
-
-    .back-btn svg {
-        transition: transform var(--trans-1);
+        transition: color var(--trans-1);
     }
 
     .back-btn:hover {
-        color: var(--text-primary);
-        background: var(--card-bg);
-        border-color: var(--accent);
-    }
-
-    .back-btn:hover svg {
-        transform: translateX(-3px);
+        color: var(--accent);
     }
 </style>
