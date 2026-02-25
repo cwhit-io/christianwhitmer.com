@@ -237,7 +237,13 @@ const path = Astro.url.pathname;
 		position: sticky;
 		top: 0;
 		z-index: 50;
-		background: var(--header-bg);
+		background: linear-gradient(
+			to bottom,
+			color-mix(in srgb, var(--header-bg) 92%, transparent) 0%,
+			color-mix(in srgb, var(--header-bg) 55%, transparent) 100%
+		);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
 		border-bottom: 2px solid var(--accent);
 		box-shadow: var(--shadow-1);
 		transition:
