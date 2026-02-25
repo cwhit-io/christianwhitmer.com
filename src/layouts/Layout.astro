@@ -90,7 +90,13 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 								>Home</a
 							>
 						</li>
-						<li><a href="/#blog">Blog</a></li>
+						<li>
+							<a
+								href="/#blog"
+								aria-current={path.startsWith("/blog")
+									? "page"
+									: undefined}>Blog</a>
+						</li>
 						<li>
 							<a
 								href="/about"
@@ -123,7 +129,13 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 							>Home</a
 						>
 					</li>
-					<li><a href="/#blog">Blog</a></li>
+					<li>
+						<a
+							href="/#blog"
+							aria-current={path.startsWith("/blog")
+								? "page"
+								: undefined}>Blog</a>
+					</li>
 					<li>
 						<a
 							href="/about"

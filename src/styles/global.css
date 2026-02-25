@@ -422,10 +422,9 @@ samp {
   }
 }
 
-/* Shared element morph: post card hero → article header image */
-::view-transition-group(post-image),
-::view-transition-group(post-title) {
-  animation-duration: 0.32s;
+/* All named shared element morphs (post-card-*, post-title-*, post-image-*) */
+::view-transition-group(*) {
+  animation-duration: 0.36s;
   animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 

@@ -25,33 +25,37 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
-    <article class="article" data-pagefind-body>
+    <article
+        class="article"
+        data-pagefind-body
+        transition:name={`post-card-${slug}`}
+    >
+        <!-- Page header — works with or without hero image -->
         <header class="article-header">
+            <div class="header-badge">
+                {
+                    post.data.tags && post.data.tags.length > 0
+                        ? post.data.tags[0]
+                        : "Blog"
+                }
+            </div>
             <h1 class="article-title" transition:name={`post-title-${slug}`}>
                 {post.data.title}
             </h1>
-
             <p class="article-subtitle">{post.data.description}</p>
-
             <div class="article-meta">
-                <span>By {post.data.author}</span>
-                <span class="sep" aria-hidden="true">|</span>
                 <time datetime={post.data.date.toISOString()}
                     >{formattedDate}</time
                 >
-
+                <span class="sep" aria-hidden="true">·</span>
+                <span>By {post.data.author}</span>
                 {
                     post.data.tags && post.data.tags.length > 0 && (
-                        <>
-                            <span class="sep" aria-hidden="true">
-                                |
-                            </span>
-                            <span class="article-tags">
-                                {post.data.tags.map((tag) => (
-                                    <span class="tag">{tag}</span>
-                                ))}
-                            </span>
-                        </>
+                        <span class="article-tags">
+                            {post.data.tags.map((tag) => (
+                                <span class="tag">{tag}</span>
+                            ))}
+                        </span>
                     )
                 }
             </div>
@@ -99,35 +103,44 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
 </Layout>
 
 <style>
+    /* ── Container: flat, open — matches about page ── */
     .article {
         max-width: 800px;
         margin: 0 auto;
-
-        background: var(--card-bg);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-2);
-        box-shadow: var(--shadow-1);
-
-        padding: var(--space-2);
     }
 
-    @media (min-width: 800px) {
-        .article {
-            padding: var(--space-4);
-        }
-    }
-
+    /* ── Header ── */
     .article-header {
-        margin-bottom: 2.5rem;
+        text-align: center;
+        padding-top: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .header-badge {
+        display: inline-block;
+        padding: 0.275rem 0.875rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+        border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+        margin-bottom: 1.25rem;
     }
 
     .article-title {
         font-family: var(--font-title);
-        font-size: clamp(1.9rem, 3vw, 2.5rem);
-        font-weight: 700;
-        line-height: 1.15;
-        color: var(--accent);
-        margin-bottom: 0.75rem;
+        font-size: clamp(1.9rem, 5vw, 3rem);
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
     }
 
     .article-subtitle {
@@ -136,7 +149,8 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         font-style: italic;
         color: var(--text-secondary);
         line-height: 1.65;
-        margin-bottom: 1.25rem;
+        max-width: 56ch;
+        margin: 0 auto 1.25rem;
     }
 
     .article-meta {
@@ -145,6 +159,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         color: var(--text-secondary);
         display: flex;
         align-items: center;
+        justify-content: center;
         flex-wrap: wrap;
         gap: 0.375rem;
     }
@@ -157,6 +172,7 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         display: flex;
         flex-wrap: wrap;
         gap: 0.375rem;
+        margin-left: 0.25rem;
     }
 
     .tag {
@@ -177,13 +193,12 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         user-select: none;
     }
 
+    /* ── Hero image — full-width within container, no card border ── */
     .article-image {
-        margin: 0 0 2.5rem;
+        margin: 0 0 3rem;
         border-radius: var(--radius-2);
         overflow: hidden;
-        border: 1px solid var(--border);
         aspect-ratio: 16 / 9;
-        max-height: 400px;
     }
 
     .article-image img {
@@ -193,6 +208,13 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         display: block;
     }
 
+    /* ── Divider between header and prose when no image ── */
+    .prose {
+        border-top: 1px solid var(--divider);
+        padding-top: 2.5rem;
+    }
+
+    /* ── Footer ── */
     .article-footer {
         margin-top: 4rem;
         padding-top: 2rem;
