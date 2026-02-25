@@ -120,13 +120,6 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         }
     }
 
-    @media (hover: hover) and (pointer: fine) {
-        .article:hover {
-            box-shadow: var(--shadow-2);
-            transform: translateY(-2px);
-        }
-    }
-
     .article-header {
         margin-bottom: 2.5rem;
     }
@@ -183,6 +176,8 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
         font-family: var(--font-body);
         color: var(--tag-text);
         white-space: nowrap;
+        cursor: default;
+        user-select: none;
     }
 
     .article-image {
