@@ -7,149 +7,58 @@ Usage:
     python run.py --limit 3           # process up to 3 incomplete topics
     python run.py --test              # dry-run: write placeholder posts, no API calls
     python run.py --test --limit 5    # dry-run for 5 posts
+    python run.py --skip-image        # generate post only, skip header image
 
 Config (plan/.env):
     MONICA_API_KEY=your_api_key_here
     MONICA_MODEL=gpt-4o
+    MONICA_FLUX_MODEL=flux_pro    # flux_schnell | flux_dev | flux_pro
 
 Requirements:
-    pip install openai python-dotenv
+    pip install openai python-dotenv requests
 """
 
 import os
 import sys
-import csv
 import argparse
-import textwrap
 from datetime import date
 from pathlib import Path
+
+from modules.ai_config import get_config
+from modules.csv_utils import read_csv, incomplete_topics, mark_complete
+from modules.prompt_templates import build_prompt
+from modules.image_gen import generate_header_image, MONICA_BASE_URL
+from modules.post_utils import create_post
+from modules.validation import validate_post
+
 
 try:
     from openai import OpenAI
 except ImportError:
     sys.exit("openai package not found. Run: pip install openai")
 
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv(Path(__file__).parent / ".env")
-except ImportError:
-    # Fall back to manual .env parsing if python-dotenv is not installed
-    _env_file = Path(__file__).parent / ".env"
-    if _env_file.exists():
-        for _line in _env_file.read_text().splitlines():
-            _line = _line.strip()
-            if _line and not _line.startswith("#") and "=" in _line:
-                _k, _v = _line.split("=", 1)
-                os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
-
 # ---------------------------------------------------------------------------
-# Config (read from environment / .env)
+# Constants
 # ---------------------------------------------------------------------------
-
-MONICA_BASE_URL = "https://openapi.monica.im/v1"
 
 CSV_PATH = Path(__file__).parent / "church_tech_blog_topics.csv"
 BLOG_DIR = Path(__file__).parent.parent / "src" / "content" / "blog"
 
-TEST_BODY = textwrap.dedent("""
-    > **TEST MODE** — this post was generated without calling the API.
-
-    ## Introduction
-
-    This is a placeholder body for **{title}**.
-
-    ## Section One
-
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-
-    ## Section Two
-
-    Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-
-    ## Conclusion
-
-    Thanks for reading this test post!
-""").strip()
+TEST_BODY = (
+    "> **TEST MODE** — this post was generated without calling the API.\n\n"
+    "## Introduction\n\nThis is a placeholder body for **{title}**.\n\n"
+    "## Section One\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.\n\n"
+    "## Section Two\n\nPraesent commodo cursus magna, vel scelerisque nisl consectetur.\n\n"
+    "## Conclusion\n\nThanks for reading this test post!"
+)
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 
-def get_config() -> tuple[str, str]:
-    """Return (api_key, model) from environment, exiting if missing."""
-    api_key = os.environ.get("MONICA_API_KEY", "").strip()
-    model = os.environ.get("MONICA_MODEL", "").strip()
-
-    missing = []
-    if not api_key:
-        missing.append("MONICA_API_KEY")
-    if not model:
-        missing.append("MONICA_MODEL")
-
-    if missing:
-        sys.exit(
-            f"Missing required .env value(s): {', '.join(missing)}\n"
-            "Copy plan/.env.example to plan/.env and fill in the values."
-        )
-
-    return api_key, model
-
-
-def read_csv() -> list[dict]:
-    with open(CSV_PATH, newline="", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-
-def write_csv(rows: list[dict]) -> None:
-    fieldnames = list(rows[0].keys())
-    with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def incomplete_topics(rows: list[dict], slug: str | None, limit: int) -> list[dict]:
-    """Return a list of topics to process, respecting --slug and --limit."""
-    if slug:
-        for row in rows:
-            if row["Slug"] == slug:
-                return [row]
-        return []
-    results = [r for r in rows if not r.get("Completed", "").strip()]
-    return results[:limit]
-
-
-def build_prompt(row: dict) -> str:
-    tags_raw = row.get("Tags", "")
-    tags = tags_raw.strip("[]").replace("'", "").replace('"', "")
-
-    return textwrap.dedent(f"""
-        You are a knowledgeable church technology writer. Write a complete, engaging blog post
-        for a church tech blog aimed at pastors, church administrators, and ministry leaders.
-
-        Post details:
-        - Title: {row["Title"]}
-        - Topic area: {row["Topic"]}
-        - Description / angle: {row["Description"]}
-        - Tags / keywords: {tags}
-
-        Requirements:
-        - Length: ~800–1200 words
-        - Tone: Warm, practical, and professional — not overly academic
-        - Structure: Use Markdown headings (##, ###) to organize sections
-        - Include a brief intro that hooks the reader
-        - Include 3–5 practical, actionable sections with real-world advice
-        - End with an encouraging conclusion
-        - Do NOT include the post title as an H1 (it will be in frontmatter)
-        - Do NOT include a YAML frontmatter block — output only the body content
-        - Do NOT wrap the output in a code fence
-    """).strip()
-
-
 def call_monica(client: OpenAI, model: str, prompt: str) -> str:
-    print("  Calling Monica API… ", end="", flush=True)
+    print(f"  Calling Monica API ({model})… ", end="", flush=True)
     response = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
@@ -159,73 +68,52 @@ def call_monica(client: OpenAI, model: str, prompt: str) -> str:
     return response.choices[0].message.content.strip()
 
 
-def build_frontmatter(row: dict) -> str:
-    title = row["Title"].replace('"', '\\"')
-    tags_raw = row.get("Tags", "[]")
-    tags = tags_raw.strip("[]").replace("'", "").replace('"', "").split(", ")
-    tags_yaml = "\n".join(f'  - "{t.strip()}"' for t in tags if t.strip())
-    description = row["Description"].replace('"', '\\"')
-    post_date = row.get("Date", str(date.today()))
-
-    header_image = row.get("HeaderImage", "").strip()
-    header_line = f'\nheaderImage: "{header_image}"' if header_image else ""
-
-    return textwrap.dedent(f"""
-        ---
-        title: "{title}"
-        date: {post_date}
-        description: "{description}"
-        author: "{row["Author"]}"
-        tags:
-        {tags_yaml}{header_line}
-        ---
-    """).strip()
-
-
-def create_post(row: dict, body: str) -> Path:
-    slug = row["Slug"]
-    post_dir = BLOG_DIR / slug
-    post_dir.mkdir(parents=True, exist_ok=True)
-    post_file = post_dir / "index.md"
-
-    frontmatter = build_frontmatter(row)
-    content = f"{frontmatter}\n\n{body}\n"
-    post_file.write_text(content, encoding="utf-8")
-    return post_file
-
-
-def mark_complete(rows: list[dict], slug: str) -> None:
-    for row in rows:
-        if row["Slug"] == slug:
-            row["Completed"] = str(date.today())
-            break
-    write_csv(rows)
-
-
 def process_topic(
     topic: dict,
     rows: list[dict],
     client: OpenAI | None,
+    api_key: str,
     model: str,
+    flux_model: str,
     test: bool,
+    skip_image: bool,
 ) -> None:
     print(f"\n  Topic:  {topic['Topic']}")
     print(f"  Title:  {topic['Title']}")
     print(f"  Slug:   {topic['Slug']}")
     print(f"  Date:   {topic['Date']}")
 
+    post_dir = BLOG_DIR / topic["Slug"]
+    post_dir.mkdir(parents=True, exist_ok=True)
+
     if test:
         body = TEST_BODY.format(title=topic["Title"])
-        print("  [TEST MODE] Using placeholder body.")
+        header_image = ""
+        print("  [TEST MODE] Skipping API calls.")
     else:
+        # Generate header image first (unless skipped)
+        header_image = ""
+        if not skip_image:
+            header_image = generate_header_image(api_key, flux_model, topic, post_dir)
+        else:
+            print("  Skipping header image generation.")
+
+        # Generate post body
         prompt = build_prompt(topic)
         body = call_monica(client, model, prompt)
 
-    post_path = create_post(topic, body)
+        # Validate post
+        warnings = validate_post(body, topic)
+        if warnings:
+            print("  ⚠️  Validation warnings:")
+            for w in warnings:
+                print(f"      - {w}")
+
+    post_path = create_post(topic, body, header_image)
     rel = post_path.relative_to(Path(__file__).parent.parent)
     print(f"  Post written → {rel}")
 
-    mark_complete(rows, topic["Slug"])
+    mark_complete(CSV_PATH, rows, topic["Slug"], str(date.today()))
     print(f"  Marked complete ({date.today()}).")
 
 
@@ -254,9 +142,14 @@ def main() -> None:
         action="store_true",
         help="Dry-run mode: write placeholder posts without calling the API.",
     )
+    parser.add_argument(
+        "--skip-image",
+        action="store_true",
+        help="Skip header image generation (post only).",
+    )
     args = parser.parse_args()
 
-    rows = read_csv()
+    rows = read_csv(CSV_PATH)
     topics = incomplete_topics(rows, args.slug, args.limit)
 
     if not topics:
@@ -271,12 +164,16 @@ def main() -> None:
 
     # Only load credentials / create client when not in test mode
     client: OpenAI | None = None
-    model = ""
+    api_key = model = flux_model = ""
     if not args.test:
-        api_key, model = get_config()
-        client = OpenAI(api_key=api_key, base_url=MONICA_BASE_URL)
+        api_key, model, flux_model = get_config()
+        client = OpenAI(
+            api_key=api_key, base_url=MONICA_BASE_URL
+        )  # MONICA_BASE_URL from module.image_gen
+        print(f"Using model: {model}, image model: {flux_model}")
     else:
         model = os.environ.get("MONICA_MODEL", "test")
+        flux_model = os.environ.get("MONICA_FLUX_MODEL", "flux_schnell")
 
     confirm = (
         input(f"\nGenerate {len(topics)} post(s){mode_label}? [Y/n] ").strip().lower()
@@ -287,7 +184,9 @@ def main() -> None:
 
     for i, topic in enumerate(topics, 1):
         print(f"\n[{i}/{len(topics)}]")
-        process_topic(topic, rows, client, model, args.test)
+        process_topic(
+            topic, rows, client, api_key, model, flux_model, args.test, args.skip_image
+        )
 
     print(f"\nAll done! {len(topics)} post(s) created.")
 
