@@ -14,15 +14,15 @@ EXAMPLE_POST = textwrap.dedent("""
 
     Think of accounts (email, giving, finance systems, cloud storage, your church management system) like master keys. Protect them like you would a key ring that opens every room.
 
-    - Turn on multi-factor authentication (MFA) everywhere. MFA blocks most account takeovers even if a password leaks.
-    - Use a password manager so staff aren’t reusing passwords across tools.
-    - Right-size permissions by role, and review access quarterly.
+    - **Turn on multi-factor authentication (MFA) everywhere.** MFA blocks most account takeovers even if a password leaks.
+    - **Use a password manager** so staff aren't reusing passwords across tools.
+    - **Right-size permissions by role**, and review access quarterly.
 
     ## Where to Begin
 
-    - This week: Turn on MFA for email and finance accounts.
-    - Next: Set up a password manager and remove shared logins.
-    - Then: Write a one-page “what to do if we get hacked” plan and make sure backups are real by testing one restore.
+    - **This week:** Turn on MFA for email and finance accounts.
+    - **Next:** Set up a password manager and remove shared logins.
+    - **Then:** Write a one-page "what to do if we get hacked" plan and make sure backups are real by testing one restore.
 
     ## Encouragement for the Journey
 
@@ -92,6 +92,17 @@ def build_prompt(row: dict) -> str:
         - Use headings (##, ###), paragraphs, and bullet lists.
         - Links: standard Markdown links only (no bare URLs).
 
+        FORMATTING (apply throughout):
+        - Use **bold** to highlight key terms, action phrases, and critical warnings on first meaningful use.
+          Example: "Turn on **multi-factor authentication (MFA)**" or "**Never store card numbers in a spreadsheet.**"
+        - Bold sparingly—aim for 2–4 bold phrases per major section, not every sentence.
+        - Separate paragraphs with a blank line. Never run two paragraphs together.
+        - Keep paragraphs short: 3–5 sentences max. Break long explanations into two paragraphs.
+        - In bullet lists, bold the lead phrase or action before the explanation.
+          Example: "- **Enable MFA on all admin accounts.** This blocks most account takeovers even if a password leaks."
+        - Use a blank line before and after every bullet list, heading, and example block.
+        - Avoid walls of text—if a paragraph exceeds 5 sentences, split it.
+
         HARD REQUIREMENTS:
         - Length: 1000–1400 words (minimum 800, maximum 1600).
         - Opening: 1–2 paragraphs that start with a real ministry scenario + a promise.
@@ -138,6 +149,9 @@ def build_prompt(row: dict) -> str:
         - Examples feel like real church operations (Sunday morning, volunteers, finance, kids, AV).
         - Headings are scannable and descriptive.
         - Output is MDX-safe (no HTML/JSX; no curly braces).
+        - Formatting: key terms and action phrases are bolded in bullets and body text.
+        - No paragraph runs longer than 5 sentences; no two paragraphs are merged without a blank line.
+        - Every bullet list has a blank line before and after it.
     """).strip()
 
 
