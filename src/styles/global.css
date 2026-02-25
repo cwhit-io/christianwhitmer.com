@@ -22,8 +22,9 @@
   --radius-1: 4px;
   --radius-2: 12px;
 
-  /* Transition */
-  --trans-1: 160ms ease-out;
+  /* Transitions */
+  --trans-1: 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --trans-card: 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 
   /* Pagefind layout defaults */
   --pagefind-ui-scale: 0.9;
@@ -291,6 +292,8 @@ samp {
 
 .prose :where(a:hover) {
   opacity: 0.8;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
 }
 
 .prose :where(ul, ol) {
@@ -378,18 +381,21 @@ samp {
 }
 
 /* ─── View Transitions ───────────────────────────────────────────────────────── */
+
+/* Root: instant swap — header/footer never slide or fade */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.18s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation: none;
+  mix-blend-mode: normal;
 }
 
-::view-transition-old(root) {
-  animation-name: vt-out;
+/* main-content: the only element that visually transitions */
+::view-transition-old(main-content) {
+  animation: 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both vt-out;
 }
 
-::view-transition-new(root) {
-  animation-name: vt-in;
+::view-transition-new(main-content) {
+  animation: 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both vt-in;
 }
 
 @keyframes vt-out {
@@ -400,14 +406,14 @@ samp {
 
   to {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-4px);
   }
 }
 
 @keyframes vt-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
 
   to {
@@ -416,8 +422,20 @@ samp {
   }
 }
 
-/* Shared element transitions (post card → article) */
-::view-transition-group(*) {
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+/* Shared element morph: post card hero → article header image */
+::view-transition-group(post-image),
+::view-transition-group(post-title) {
+  animation-duration: 0.32s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Disable all view transitions for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(main-content),
+  ::view-transition-new(main-content) {
+    animation: none !important;
+  }
 }

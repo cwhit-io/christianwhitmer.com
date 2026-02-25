@@ -161,7 +161,11 @@ const path = Astro.url.pathname;
 			);
 		</script>
 
-		<main class="main" id="main-content">
+		<main
+			class="main"
+			id="main-content"
+			style="view-transition-name: main-content"
+		>
 			<slot />
 		</main>
 
@@ -260,7 +264,7 @@ const path = Astro.url.pathname;
 		gap: 0.625rem;
 		text-decoration: none;
 		flex-shrink: 0;
-		transition: opacity 0.2s;
+		transition: opacity var(--trans-1);
 	}
 
 	.logo:hover {
@@ -382,8 +386,8 @@ const path = Astro.url.pathname;
 		overflow: hidden;
 		max-height: 0;
 		transition:
-			max-height 0.25s ease,
-			padding 0.25s ease;
+			max-height var(--trans-card),
+			padding var(--trans-card);
 		border-top: 1px solid var(--divider);
 	}
 
