@@ -1,10 +1,10 @@
 ---
 title: "Five Things Your Communications Director Could Stop Doing Manually Right Now"
 seoDescription: "Five repetitive tasks your church communications director is still doing by hand — and the AI tools that can handle them automatically."
-datePublished: Wed Apr 29 2026 03:01:32 GMT+0000 (Coordinated Universal Time)
+datePublished: 2026-04-29T03:01:32.642Z
 cuid: cmojgxrhe000v02l1eoub6aou
 slug: five-things-your-communications-director-could-stop-doing-manually-right-now
-cover: https://images.openai.com/blob/S3QT727eDD.png
+cover: https://cdn.hashnode.com/uploads/covers/69f16b5ead6e531c724589d2/39fb578a-9088-4595-812f-1279363767b1.png
 
 ---
 
