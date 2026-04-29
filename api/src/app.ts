@@ -10,6 +10,7 @@ import cors from "@fastify/cors";
 import { healthRoutes } from "./routes/health.js";
 import { postsRoutes } from "./routes/posts.js";
 import { mediaRoutes } from "./routes/media.js";
+import { uiRoutes } from "./routes/ui.js";
 
 export function buildApp(opts: { logger?: boolean | object } = {}) {
   const app = Fastify({
@@ -50,6 +51,7 @@ export function buildApp(opts: { logger?: boolean | object } = {}) {
   });
 
   // ── Routes ────────────────────────────────────────────────────────────────
+  app.register(uiRoutes);
   app.register(healthRoutes);
   app.register(postsRoutes);
   app.register(mediaRoutes);
