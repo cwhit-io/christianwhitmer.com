@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/copy-content-assets.mjs && astro build && echo '_worker.js' > dist/.assetsignore && npx pagefind --site dist",
+    "build": "astro build && echo '_worker.js' > dist/.assetsignore && npx pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro"
   },

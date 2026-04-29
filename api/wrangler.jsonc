@@ -5,9 +5,14 @@
   "compatibility_date": "2026-02-13",
   "compatibility_flags": ["nodejs_compat"],
 
+  "workers_dev": true,
+  "preview_urls": true,
+
   "vars": {
     "GITHUB_OWNER": "cwhit-io",
     "GITHUB_REPO": "christianwhitmer.com",
-    "GITHUB_BRANCH": "main"
+    "GITHUB_BRANCH": "master",
+    "POSTS_DIR": "src/content/blog",
+    "DEFAULT_AUTHOR": "Christian Whitmer"
   }
 }
