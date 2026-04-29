@@ -20,6 +20,16 @@ type PostInput = {
   draft?: boolean;
 };
 
+type MediaInput = {
+  postSlug?: string;
+  slug?: string;
+  filename?: string;
+  contentType?: string;
+  data?: string;
+  alt?: string;
+};
+
+
 type ParsedMarkdown = {
   frontmatter: Record<string, any>;
   body: string;
@@ -61,6 +71,30 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Authorization, Content-Type",
 };
 
+const MEDIA_BASE_DIR = "public/images/blog";
+const MEDIA_PUBLIC_BASE = "/images/blog";
+const MAX_MEDIA_BYTES = 2 * 1024 * 1024; // 2 MB
+
+const ALLOWED_MEDIA_EXTENSIONS = [
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
+  ".gif",
+  ".svg",
+  ".pdf",
+];
+
+const ALLOWED_MEDIA_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/svg+xml",
+  "application/pdf",
+];
+
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
@@ -86,7 +120,11 @@ export default {
           repo: `${env.GITHUB_OWNER}/${env.GITHUB_REPO}`,
           branch: env.GITHUB_BRANCH,
           postsDir: env.POSTS_DIR,
+          mediaBaseDir: MEDIA_BASE_DIR,
+          mediaPublicBase: MEDIA_PUBLIC_BASE,
+          maxMediaBytes: MAX_MEDIA_BYTES,
         });
+
       }
 
       // GET /posts
@@ -98,6 +136,196 @@ export default {
           posts,
         });
       }
+
+      // POST /media
+      if (method === "POST" && path === "/media") {
+        const input = await readJson<MediaInput>(request);
+
+        const rawSlug = input.postSlug || input.slug;
+
+        if (!rawSlug) {
+          return json({ ok: false, error: "Missing required field: postSlug" }, 400);
+        }
+
+        if (!input.filename) {
+          return json({ ok: false, error: "Missing required field: filename" }, 400);
+        }
+
+        if (!input.contentType) {
+          return json({ ok: false, error: "Missing required field: contentType" }, 400);
+        }
+
+        if (!input.data) {
+          return json({ ok: false, error: "Missing required field: data" }, 400);
+        }
+
+        const postSlug = sanitizeSlug(rawSlug);
+        const filename = sanitizeFilename(input.filename);
+        const contentType = input.contentType.trim().toLowerCase();
+        const cleanData = cleanBase64(input.data);
+
+        if (!isAllowedMediaFilename(filename)) {
+          return json(
+            {
+              ok: false,
+              error: "Unsupported media file extension",
+              allowedExtensions: ALLOWED_MEDIA_EXTENSIONS,
+            },
+            400
+          );
+        }
+
+        if (!ALLOWED_MEDIA_TYPES.includes(contentType)) {
+          return json(
+            {
+              ok: false,
+              error: "Unsupported media content type",
+              allowedContentTypes: ALLOWED_MEDIA_TYPES,
+            },
+            400
+          );
+        }
+
+        const size = estimateBase64Bytes(cleanData);
+
+        if (size > MAX_MEDIA_BYTES) {
+          return json(
+            {
+              ok: false,
+              error: "Media file is too large",
+              maxBytes: MAX_MEDIA_BYTES,
+              receivedBytes: size,
+            },
+            400
+          );
+        }
+
+        const filePath = mediaPath(postSlug, filename);
+        const existing = await getGitHubFile(env, filePath, false);
+
+        if (existing) {
+          return json(
+            {
+              ok: false,
+              error: "Media file already exists",
+              postSlug,
+              filename,
+              path: filePath,
+            },
+            409
+          );
+        }
+
+        const result = await putGitHubFileBase64(env, {
+          path: filePath,
+          contentBase64: cleanData,
+          message: `Add blog media: ${postSlug}/${filename}`,
+        });
+
+        const publicUrl = mediaPublicUrl(postSlug, filename);
+        const markdown = contentType === "application/pdf"
+          ? `[${input.alt || filename}](${publicUrl})`
+          : `![${escapeMarkdownAlt(input.alt || filename)}](${publicUrl})`;
+
+        return json(
+          {
+            ok: true,
+            action: "uploaded",
+            postSlug,
+            filename,
+            contentType,
+            size,
+            path: filePath,
+            url: publicUrl,
+            markdown,
+            githubUrl: result.content?.html_url,
+            commit: result.commit,
+          },
+          201
+        );
+      }
+
+      const mediaListMatch = path.match(/^\/media\/([a-z0-9-]+)$/);
+      const mediaFileMatch = path.match(/^\/media\/([a-z0-9-]+)\/([^/]+)$/);
+
+      // GET /media/:postSlug
+      if (method === "GET" && mediaListMatch) {
+        const postSlug = sanitizeSlug(mediaListMatch[1]);
+        const dirPath = `${MEDIA_BASE_DIR}/${postSlug}`;
+
+        const items = await listGitHubDirectory(env, dirPath, false);
+
+        if (!items) {
+          return json({
+            ok: true,
+            postSlug,
+            count: 0,
+            media: [],
+          });
+        }
+
+        const media = items
+          .filter((item) => item.type === "file")
+          .map((item) => {
+            const filename = item.name;
+
+            return {
+              name: filename,
+              filename,
+              path: item.path,
+              url: mediaPublicUrl(postSlug, filename),
+              githubUrl: item.html_url,
+              size: item.size,
+              sha: item.sha,
+            };
+          })
+          .sort((a, b) => a.filename.localeCompare(b.filename));
+
+        return json({
+          ok: true,
+          postSlug,
+          count: media.length,
+          media,
+        });
+      }
+
+      // DELETE /media/:postSlug/:filename
+      if (method === "DELETE" && mediaFileMatch) {
+        const postSlug = sanitizeSlug(mediaFileMatch[1]);
+        const filename = sanitizeFilename(decodeURIComponent(mediaFileMatch[2]));
+        const filePath = mediaPath(postSlug, filename);
+
+        const file = await getGitHubFile(env, filePath, false);
+
+        if (!file) {
+          return json(
+            {
+              ok: false,
+              error: "Media file not found",
+              postSlug,
+              filename,
+            },
+            404
+          );
+        }
+
+        const result = await deleteGitHubFile(env, {
+          path: filePath,
+          message: `Delete blog media: ${postSlug}/${filename}`,
+          sha: file.sha,
+        });
+
+        return json({
+          ok: true,
+          action: "deleted",
+          postSlug,
+          filename,
+          path: filePath,
+          url: mediaPublicUrl(postSlug, filename),
+          commit: result.commit,
+        });
+      }
+
 
       // POST /posts
       if (method === "POST" && path === "/posts") {
@@ -363,12 +591,11 @@ function normalizePath(pathname: string): string {
 
 async function readJson<T>(request: Request): Promise<T> {
   try {
-    return await request.json<T>();
+    return (await request.json()) as T;
   } catch {
     throw new Error("Invalid JSON request body");
   }
 }
-
 function githubHeaders(env: Env): HeadersInit {
   return {
     Authorization: `Bearer ${env.GITHUB_TOKEN}`,
@@ -755,6 +982,130 @@ function encodeBase64(value: string): string {
 
   return btoa(binary);
 }
+
+async function listGitHubDirectory(
+  env: Env,
+  path: string,
+  throwOnMissing = true
+): Promise<GitHubContentDirItem[] | null> {
+  const response = await fetch(githubContentsUrl(env, path), {
+    headers: githubHeaders(env),
+  });
+
+  if (response.status === 404 && !throwOnMissing) {
+    return null;
+  }
+
+  const text = await response.text();
+
+  let data: any = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = text;
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `GitHub directory lookup failed: ${response.status} ${JSON.stringify(data)}`
+    );
+  }
+
+  if (!Array.isArray(data)) {
+    throw new Error(`GitHub path is not a directory: ${path}`);
+  }
+
+  return data as GitHubContentDirItem[];
+}
+
+async function putGitHubFileBase64(
+  env: Env,
+  params: {
+    path: string;
+    contentBase64: string;
+    message: string;
+    sha?: string;
+  }
+): Promise<any> {
+  const url = githubContentsUrl(env, params.path).replace(
+    `?ref=${encodeURIComponent(env.GITHUB_BRANCH)}`,
+    ""
+  );
+
+  return githubRequest(env, url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: params.message,
+      content: params.contentBase64,
+      branch: env.GITHUB_BRANCH,
+      ...(params.sha ? { sha: params.sha } : {}),
+    }),
+  });
+}
+
+function mediaPath(postSlug: string, filename: string): string {
+  return `${MEDIA_BASE_DIR}/${postSlug}/${filename}`;
+}
+
+function mediaPublicUrl(postSlug: string, filename: string): string {
+  return `${MEDIA_PUBLIC_BASE}/${postSlug}/${filename}`;
+}
+
+function sanitizeFilename(value: string): string {
+  const parts = value.split(".");
+  const extension = parts.length > 1 ? parts.pop() || "" : "";
+  const basename = parts.join(".");
+
+  const cleanBase = basename
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  const cleanExt = extension
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]/g, "");
+
+  if (!cleanBase || !cleanExt) {
+    throw new Error("Invalid filename");
+  }
+
+  return `${cleanBase}.${cleanExt}`;
+}
+
+function isAllowedMediaFilename(filename: string): boolean {
+  const lower = filename.toLowerCase();
+  return ALLOWED_MEDIA_EXTENSIONS.some((ext) => lower.endsWith(ext));
+}
+
+function cleanBase64(value: string): string {
+  // Supports plain base64 or data URLs like:
+  // data:image/webp;base64,AAAA...
+  const commaIndex = value.indexOf(",");
+
+  if (value.startsWith("data:") && commaIndex !== -1) {
+    return value.slice(commaIndex + 1).replace(/\s/g, "");
+  }
+
+  return value.replace(/\s/g, "");
+}
+
+function estimateBase64Bytes(base64: string): number {
+  const padding = base64.endsWith("==") ? 2 : base64.endsWith("=") ? 1 : 0;
+  return Math.floor((base64.length * 3) / 4) - padding;
+}
+
+function escapeMarkdownAlt(value: string): string {
+  return value.replace(/\[/g, "").replace(/\]/g, "").trim();
+}
+
 
 function decodeBase64(value: string): string {
   const clean = value.replace(/\n/g, "");
