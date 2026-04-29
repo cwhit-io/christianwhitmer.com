@@ -1,0 +1,687 @@
+openapi: "3.1.0"
+info:
+  title: Christian Whitmer Blog API
+  version: "1.0.0"
+  description: |
+    Standalone Node.js microservice that manages blog posts and media for
+    christianwhitmer.com. Posts and media are stored as files in GitHub.
+    Image generation is handled server-side via the OpenAI Images API.
+
+servers:
+  - url: "http://localhost:3000"
+    description: Local development
+  - url: "https://api.christianwhitmer.com"
+    description: Production (update with real URL)
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    OkTrue:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+
+    ErrorResponse:
+      type: object
+      required: [ok, error, code]
+      properties:
+        ok:
+          type: boolean
+          enum: [false]
+        error:
+          type: string
+        code:
+          type: string
+        details:
+          type: object
+
+    CommitInfo:
+      type: object
+      properties:
+        sha:
+          type: string
+        html_url:
+          type: string
+        message:
+          type: string
+
+    PostSummary:
+      type: object
+      properties:
+        slug:
+          type: string
+        path:
+          type: string
+        sha:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        author:
+          type: string
+        date:
+          type: string
+          format: date
+        tags:
+          type: array
+          items:
+            type: string
+        draft:
+          type: boolean
+
+    PostDetail:
+      allOf:
+        - $ref: "#/components/schemas/PostSummary"
+        - type: object
+          properties:
+            frontmatter:
+              type: object
+            body:
+              type: string
+            markdown:
+              type: string
+
+    MediaItem:
+      type: object
+      properties:
+        name:
+          type: string
+        filename:
+          type: string
+        path:
+          type: string
+        url:
+          type: string
+        publicUrl:
+          type: string
+        githubUrl:
+          type: string
+        size:
+          type: integer
+        sha:
+          type: string
+
+    GenerationInfo:
+      type: object
+      properties:
+        model:
+          type: string
+        size:
+          type: string
+        quality:
+          type: string
+        outputFormat:
+          type: string
+        usage:
+          type: object
+          properties:
+            input_tokens:
+              type: integer
+            output_tokens:
+              type: integer
+            total_tokens:
+              type: integer
+
+paths:
+  /health:
+    get:
+      summary: Liveness check
+      operationId: getHealth
+      security: []
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      service:
+                        type: string
+                      repo:
+                        type: string
+                      branch:
+                        type: string
+
+  /posts:
+    get:
+      summary: List all blog posts
+      operationId: listPosts
+      responses:
+        "200":
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      count:
+                        type: integer
+                      posts:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/PostSummary"
+
+    post:
+      summary: Create a new blog post
+      operationId: createPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, description, body]
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                body:
+                  type: string
+                  description: Markdown body content
+                slug:
+                  type: string
+                  description: Auto-derived from title if omitted
+                author:
+                  type: string
+                date:
+                  type: string
+                  format: date
+                tags:
+                  type: array
+                  items:
+                    type: string
+                draft:
+                  type: boolean
+                  default: false
+      responses:
+        "201":
+          description: Post created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      action:
+                        type: string
+                        enum: [created]
+                      slug:
+                        type: string
+                      path:
+                        type: string
+                      commit:
+                        $ref: "#/components/schemas/CommitInfo"
+        "409":
+          description: Post already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /posts/{slug}:
+    parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+
+    get:
+      summary: Get a blog post
+      operationId: getPost
+      responses:
+        "200":
+          description: Post found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - $ref: "#/components/schemas/PostDetail"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      summary: Update a blog post (merge frontmatter)
+      operationId: updatePost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                author:
+                  type: string
+                date:
+                  type: string
+                  format: date
+                tags:
+                  type: array
+                  items:
+                    type: string
+                draft:
+                  type: boolean
+                body:
+                  type: string
+      responses:
+        "200":
+          description: Post updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      action:
+                        type: string
+                        enum: [updated]
+                      slug:
+                        type: string
+                      commit:
+                        $ref: "#/components/schemas/CommitInfo"
+
+    patch:
+      summary: Partially update a blog post
+      operationId: patchPost
+      requestBody:
+        $ref: "#/components/requestBodies/PostUpdate"
+      responses:
+        "200":
+          description: Post updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+
+    delete:
+      summary: Delete a blog post
+      operationId: deletePost
+      responses:
+        "200":
+          description: Post deleted
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      action:
+                        type: string
+                        enum: [deleted]
+                      slug:
+                        type: string
+                      commit:
+                        $ref: "#/components/schemas/CommitInfo"
+
+  /posts/{slug}/publish:
+    post:
+      summary: Publish a draft post (sets draft=false)
+      operationId: publishPost
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post published
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      action:
+                        type: string
+                        enum: [published]
+
+  /posts/{slug}/attach-media:
+    post:
+      summary: Attach an already-uploaded media file to a post
+      operationId: attachMedia
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename]
+              properties:
+                filename:
+                  type: string
+                  example: hero.webp
+                alt:
+                  type: string
+                placement:
+                  type: string
+                  enum: [frontmatter, body-top, body-after-first-heading]
+                  default: frontmatter
+                field:
+                  type: string
+                  default: image
+                  description: Frontmatter field name to set when placement=frontmatter
+      responses:
+        "200":
+          description: Media attached
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      slug:
+                        type: string
+                      publicUrl:
+                        type: string
+                      placement:
+                        type: string
+                      updated:
+                        type: boolean
+
+  /media:
+    post:
+      summary: Upload a media file to GitHub
+      operationId: uploadMedia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename, contentType]
+              properties:
+                postSlug:
+                  type: string
+                  description: Slug of the post this media belongs to
+                filename:
+                  type: string
+                  example: hero.webp
+                contentType:
+                  type: string
+                  example: image/webp
+                contentBase64:
+                  type: string
+                  description: Base64-encoded file content (or use legacy `data` field)
+                data:
+                  type: string
+                  description: Legacy alias for contentBase64
+                alt:
+                  type: string
+      responses:
+        "201":
+          description: Media uploaded
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      postSlug:
+                        type: string
+                      filename:
+                        type: string
+                      path:
+                        type: string
+                      url:
+                        type: string
+                      publicUrl:
+                        type: string
+                      markdown:
+                        type: string
+                      size:
+                        type: integer
+                      sha:
+                        type: string
+
+  /media/generate:
+    post:
+      summary: Generate an image with OpenAI and upload to GitHub
+      operationId: generateMedia
+      description: |
+        Calls the OpenAI Images API, handles the base64 response server-side,
+        uploads the image to GitHub, and returns only the final URL and metadata.
+        The base64 payload is never returned to the caller.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [postSlug, filename, prompt]
+              properties:
+                postSlug:
+                  type: string
+                filename:
+                  type: string
+                  example: hero.webp
+                prompt:
+                  type: string
+                  minLength: 10
+                  maxLength: 4000
+                size:
+                  type: string
+                  enum: ["1024x1024", "1536x1024", "1024x1536"]
+                quality:
+                  type: string
+                  enum: [low, medium, high, auto]
+                outputFormat:
+                  type: string
+                  enum: [png, jpeg, webp]
+      responses:
+        "201":
+          description: Image generated and uploaded
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      path:
+                        type: string
+                      publicUrl:
+                        type: string
+                      contentType:
+                        type: string
+                      bytes:
+                        type: integer
+                      sha:
+                        type: string
+                      generation:
+                        $ref: "#/components/schemas/GenerationInfo"
+
+  /media/generate-and-attach:
+    post:
+      summary: Generate image, upload to GitHub, and attach to post
+      operationId: generateAndAttach
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [postSlug, filename, prompt]
+              properties:
+                postSlug:
+                  type: string
+                filename:
+                  type: string
+                prompt:
+                  type: string
+                  minLength: 10
+                alt:
+                  type: string
+                placement:
+                  type: string
+                  enum: [frontmatter, body-top, body-after-first-heading]
+                  default: frontmatter
+                field:
+                  type: string
+                  default: image
+                size:
+                  type: string
+                  enum: ["1024x1024", "1536x1024", "1024x1536"]
+                quality:
+                  type: string
+                  enum: [low, medium, high, auto]
+                outputFormat:
+                  type: string
+                  enum: [png, jpeg, webp]
+      responses:
+        "201":
+          description: Image generated, uploaded, and attached
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      path:
+                        type: string
+                      publicUrl:
+                        type: string
+                      contentType:
+                        type: string
+                      bytes:
+                        type: integer
+                      postAttached:
+                        type: boolean
+                      generation:
+                        $ref: "#/components/schemas/GenerationInfo"
+
+  /media/{postSlug}:
+    get:
+      summary: List media files for a post
+      operationId: listMedia
+      parameters:
+        - name: postSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Media list (empty array if no media exists)
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      postSlug:
+                        type: string
+                      count:
+                        type: integer
+                      media:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/MediaItem"
+
+  /media/{postSlug}/{filename}:
+    delete:
+      summary: Delete a media file from GitHub
+      operationId: deleteMedia
+      parameters:
+        - name: postSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Media deleted
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkTrue"
+                  - type: object
+                    properties:
+                      deleted:
+                        type: boolean
+                      path:
+                        type: string
+        "404":
+          description: Media file not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+# Shared request body used by PUT and PATCH (defined inline above, included here for reference)
+# requestBodies exists only to satisfy the $ref in patch above
+components:
+  requestBodies:
+    PostUpdate:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              author:
+                type: string
+              date:
+                type: string
+                format: date
+              tags:
+                type: array
+                items:
+                  type: string
+              draft:
+                type: boolean
+              body:
+                type: string
