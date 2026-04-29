@@ -1,26 +1,80 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
+import { logout } from '../lib/api'
+import PostsList from '../components/PostsList'
+import PostEditor from '../components/PostEditor'
+import MediaManager from '../components/MediaManager'
 
-export default function Dashboard({ apiToken, user, onLogout }:{ apiToken:string, user:string|null, onLogout:()=>void }){
+type View =
+  | { name: 'posts' }
+  | { name: 'editor'; slug: string | null }
+  | { name: 'media'; postSlug?: string }
+
+interface Props {
+  token: string
+  user: string
+  onLogout: () => void
+}
+
+export default function Dashboard({ token, user, onLogout }: Props) {
+  const [view, setView] = useState<View>({ name: 'posts' })
+
+  const handleLogout = useCallback(async () => {
+    await logout().catch(() => {})
+    onLogout()
+  }, [onLogout])
+
+  const goToPosts = useCallback(() => setView({ name: 'posts' }), [])
+  const openEditor = useCallback((slug: string | null) => setView({ name: 'editor', slug }), [])
+  const openMedia = useCallback((postSlug?: string) => setView({ name: 'media', postSlug }), [])
+
   return (
-    <div style={{fontFamily:'Inter, system-ui, sans-serif', padding:24}}>
-      <header style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <h2>CMS Dashboard</h2>
-        <div>
-          <strong>{user}</strong>
-          <button style={{marginLeft:12}} onClick={async ()=>{ await fetch('/cms/logout',{method:'POST'}); onLogout() }}>Logout</button>
-        </div>
+    <div className="app-shell">
+      <header className="app-header">
+        <span className="brand">✦ Blog CMS</span>
+        <nav className="app-nav">
+          <button
+            className={`nav-btn${view.name === 'posts' || view.name === 'editor' ? ' active' : ''}`}
+            onClick={goToPosts}
+          >
+            Posts
+          </button>
+          <button
+            className={`nav-btn${view.name === 'media' ? ' active' : ''}`}
+            onClick={() => openMedia()}
+          >
+            Media
+          </button>
+        </nav>
+        <span className="nav-spacer" />
+        <span className="hdr-user">{user}</span>
+        <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
       </header>
 
-      <section style={{marginTop:24}}>
-        <h3>Your API Token</h3>
-        <pre style={{background:'#f6f8fa', padding:12, overflowX:'auto'}}>{apiToken}</pre>
-        <p>Use this token for API requests from the editor.</p>
-      </section>
-
-      <section style={{marginTop:24}}>
-        <h3>Coming soon</h3>
-        <p>Posts list, editor, and media manager will be added here.</p>
-      </section>
+      <main className="app-main">
+        {view.name === 'posts' && (
+          <PostsList
+            token={token}
+            onEdit={openEditor}
+            onNewPost={() => openEditor(null)}
+            onOpenMedia={openMedia}
+          />
+        )}
+        {view.name === 'editor' && (
+          <PostEditor
+            token={token}
+            slug={view.slug}
+            onBack={goToPosts}
+            onOpenMedia={openMedia}
+          />
+        )}
+        {view.name === 'media' && (
+          <MediaManager
+            token={token}
+            initialSlug={view.postSlug}
+            onBack={goToPosts}
+          />
+        )}
+      </main>
     </div>
   )
 }

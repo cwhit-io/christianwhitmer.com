@@ -6,17 +6,14 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
 
-# Copy source and build
+# Copy source and build TypeScript API
 COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
 
-# Build CMS frontend if present
-# Copy full cms source so frontend install/build hooks have files available
+# Build React CMS
 COPY cms ./cms
-RUN if [ -f ./cms/package.json ]; then \
-            cd cms && if [ -f ./package-lock.json ]; then npm ci; else npm install; fi && npm run build; \
-        fi
+RUN cd cms && npm ci && npm run build
 
 # ─── Production image ─────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -32,7 +29,8 @@ RUN npm ci --omit=dev
 
 # Copy compiled output
 COPY --from=builder /app/dist ./dist
-# Copy built CMS frontend (if present)
+
+# Copy built React CMS
 COPY --from=builder /app/cms/dist ./cms/dist
 
 # Ownership
