@@ -4,7 +4,7 @@ seoDescription: "Five repetitive tasks your church communications director is st
 datePublished: Wed Apr 29 2026 03:01:32 GMT+0000 (Coordinated Universal Time)
 cuid: cmojgxrhe000v02l1eoub6aou
 slug: five-things-your-communications-director-could-stop-doing-manually-right-now
-tags: ai-tools, church-communications, church-technology, ministry-operations
+cover: https://images.openai.com/blob/S3QT727eDD.png
 
 ---
 
