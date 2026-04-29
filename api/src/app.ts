@@ -9,6 +9,8 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import fastifyCookie from "@fastify/cookie";
+import fastifyStatic from "@fastify/static";
+import path from "path";
 import { healthRoutes } from "./routes/health.js";
 import { postsRoutes } from "./routes/posts.js";
 import { mediaRoutes } from "./routes/media.js";
@@ -39,12 +41,31 @@ export function buildApp(opts: { logger?: boolean | object } = {}) {
   app.register(fastifyJwt, { secret: config.jwtSecret });
   app.register(fastifyCookie);
 
+  // ── Static CMS assets (if built) ────────────────────────────────────────
+  try {
+    const cmsDist = path.join(process.cwd(), "cms", "dist")
+    app.register(fastifyStatic, {
+      root: cmsDist,
+      prefix: "/cms/",
+    })
+
+    // History API fallback for SPA routes under /cms
+    app.get('/cms/*', (_req, reply) => {
+      return reply.sendFile('index.html')
+    })
+  } catch (err) {
+    // ignore if static can't be registered at runtime
+    app.log.warn('CMS static serving not enabled: %s', String(err))
+  }
+
   // ── Global error handler ──────────────────────────────────────────────────
-  app.setErrorHandler((error, _request, reply) => {
+  app.setErrorHandler((error: any, _request, reply) => {
     app.log.error(error);
-    reply.code(error.statusCode ?? 500).send({
+    const status = error && (error.statusCode ?? error.status) ? (error.statusCode ?? error.status) : 500;
+    const message = (error && (error.message || error.msg)) || "Internal server error";
+    reply.code(status).send({
       ok: false,
-      error: error.message || "Internal server error",
+      error: message,
       code: "SERVER_ERROR",
     });
   });

@@ -11,6 +11,13 @@ COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
 
+# Build CMS frontend if present
+# Copy full cms source so frontend install/build hooks have files available
+COPY cms ./cms
+RUN if [ -f ./cms/package.json ]; then \
+            cd cms && if [ -f ./package-lock.json ]; then npm ci; else npm install; fi && npm run build; \
+        fi
+
 # ─── Production image ─────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
@@ -25,6 +32,8 @@ RUN npm ci --omit=dev
 
 # Copy compiled output
 COPY --from=builder /app/dist ./dist
+# Copy built CMS frontend (if present)
+COPY --from=builder /app/cms/dist ./cms/dist
 
 # Ownership
 RUN chown -R appuser:appgroup /app
