@@ -21,11 +21,15 @@ function optionalEnv(name: string, fallback: string): string {
   return process.env[name] || fallback;
 }
 
+// Read once so we can reuse as JWT secret fallback without a circular reference.
+const _apiToken = requireEnv("API_TOKEN");
+const _uiPassword = requireEnv("UI_PASSWORD");
+
 export const config = {
   port: parseInt(optionalEnv("PORT", "3000"), 10),
 
   // Auth
-  apiToken: requireEnv("API_TOKEN"),
+  apiToken: _apiToken,
 
   // GitHub
   githubToken: requireEnv("GITHUB_TOKEN"),
@@ -53,6 +57,13 @@ export const config = {
 
   // Read protection — set to "true" to require auth on GET /posts and GET /posts/:slug
   protectReads: optionalEnv("PROTECT_READS", "true") === "true",
+
+  // CMS UI auth (username/password for the web dashboard)
+  uiUsername: optionalEnv("UI_USERNAME", "admin"),
+  uiPassword: _uiPassword,
+
+  // JWT secret for CMS session cookies — defaults to the API token value
+  jwtSecret: optionalEnv("JWT_SECRET", _apiToken),
 } as const;
 
 export type Config = typeof config;

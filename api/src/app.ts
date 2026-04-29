@@ -7,10 +7,14 @@
 
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import fastifyJwt from "@fastify/jwt";
+import fastifyCookie from "@fastify/cookie";
 import { healthRoutes } from "./routes/health.js";
 import { postsRoutes } from "./routes/posts.js";
 import { mediaRoutes } from "./routes/media.js";
 import { uiRoutes } from "./routes/ui.js";
+import { cmsAuthRoutes } from "./routes/cms-auth.js";
+import { config } from "./config.js";
 
 export function buildApp(opts: { logger?: boolean | object } = {}) {
   const app = Fastify({
@@ -30,6 +34,10 @@ export function buildApp(opts: { logger?: boolean | object } = {}) {
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
   });
+
+  // ── JWT + Cookie (for CMS dashboard sessions) ─────────────────────────────
+  app.register(fastifyJwt, { secret: config.jwtSecret });
+  app.register(fastifyCookie);
 
   // ── Global error handler ──────────────────────────────────────────────────
   app.setErrorHandler((error, _request, reply) => {
@@ -52,6 +60,7 @@ export function buildApp(opts: { logger?: boolean | object } = {}) {
 
   // ── Routes ────────────────────────────────────────────────────────────────
   app.register(uiRoutes);
+  app.register(cmsAuthRoutes);
   app.register(healthRoutes);
   app.register(postsRoutes);
   app.register(mediaRoutes);
