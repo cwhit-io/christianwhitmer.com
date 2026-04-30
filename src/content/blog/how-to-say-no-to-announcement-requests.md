@@ -8,6 +8,7 @@ tags:
   - "ministry-operations"
   - "volunteers"
 draft: true
+image: "https://r2.cwhit.io/images/blog/how-to-say-no-to-announcement-requests/hero.png"
 ---
 
 Every communications director has lived this moment. It's Wednesday afternoon. You've already finalized the bulletin, scheduled the social posts, and locked the slide deck. Then a well-meaning ministry leader walks in — or texts, or emails, or catches you in the hallway — with "Hey, can we get an announcement in this Sunday?"
