@@ -9,6 +9,8 @@ tags:
   - "volunteers"
   - "ministry-operations"
 draft: false
+image: "https://r2.cwhit.io/images/blog/church-audio-16bit-44khz-is-enough/church-audio-booth-sunday-morning.webp"
+imageAlt: "Church audio mixing booth with a console, headphones, laptop, and XLR cables on a Sunday morning"
 ---
 
 Every few months, someone in the AV booth discovers that the recording software is set to 16-bit/44.1kHz and panics. "We need to bump this up to 32-bit float and 96kHz — we're losing quality!" And suddenly a perfectly good Sunday morning workflow is in crisis mode over a setting that, honestly, was never the problem.
