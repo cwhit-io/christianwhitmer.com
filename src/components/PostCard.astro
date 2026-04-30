@@ -6,9 +6,16 @@ interface Props {
 	author: string;
 	slug: string;
 	headerImage?: string;
+	image?: string;
 }
 
-const { title, description, date, author, slug, headerImage } = Astro.props;
+const { title, description, date, author, slug, headerImage, image } = Astro.props;
+
+const heroSrc = image
+	? (image.startsWith('http') ? image : `https://${image}`)
+	: headerImage
+	? `/blog/${slug}/${headerImage}`
+	: null;
 
 const formattedDate = date.toLocaleDateString("en-US", {
 	year: "numeric",
@@ -20,10 +27,10 @@ const formattedDate = date.toLocaleDateString("en-US", {
 <article class="card" transition:name={`post-card-${slug}`}>
 	<a href={`/blog/${slug}`} class="card-link" data-astro-prefetch>
 		{
-			headerImage && (
+			heroSrc && (
 				<div class="card-image">
 					<img
-						src={`/blog/${slug}/${headerImage}`}
+						src={heroSrc}
 						alt={title}
 						loading="lazy"
 						decoding="async"
