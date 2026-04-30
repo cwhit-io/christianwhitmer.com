@@ -9,6 +9,8 @@ tags:
   - "church-tech"
   - "ministry-operations"
 draft: false
+image: "https://r2.cwhit.io/images/blog/five-things-comms-director-stop-doing-manually/five-things-comms-director-hero.webp"
+imageAlt: "Church communications office desk with laptop, social media notifications, sticky notes, and printed bulletins — Five Things Your Communications Director Could Stop Doing Manually Right Now"
 ---
 
 Your communications director is probably one of the hardest-working people on your staff. They're writing announcements, resizing graphics, chasing down bulletin copy, scheduling social posts, and somehow also supposed to be thinking strategically about how your church talks to its community. That's a lot for one person — or one very tired volunteer.
