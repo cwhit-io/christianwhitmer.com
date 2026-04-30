@@ -12,7 +12,9 @@ import fastifyCookie from "@fastify/cookie";
 import fastifyStatic from "@fastify/static";
 import path from "path";
 import { healthRoutes } from "./routes/health.js";
+import { statusRoutes } from "./routes/status.js";
 import { postsRoutes } from "./routes/posts.js";
+import { pushEntry } from "./lib/request-log.js";
 import { mediaRoutes } from "./routes/media.js";
 import { uiRoutes } from "./routes/ui.js";
 import { cmsAuthRoutes } from "./routes/cms-auth.js";
@@ -62,6 +64,22 @@ export function buildApp(opts: { logger?: boolean | object } = {}) {
     });
   });
 
+  // ── Request logging ───────────────────────────────────────────────────────
+  // Skip monitoring endpoints to avoid noise in the log.
+  const SKIP_LOG = new Set(["/status", "/logs"]);
+  app.addHook("onResponse", (request, reply, done) => {
+    if (!SKIP_LOG.has(request.routeOptions?.url ?? request.url)) {
+      pushEntry({
+        timestamp: new Date().toISOString(),
+        method: request.method,
+        url: request.url,
+        statusCode: reply.statusCode,
+        responseTimeMs: Math.round(reply.elapsedTime ?? 0),
+      });
+    }
+    done();
+  });
+
   // ── Routes ────────────────────────────────────────────────────────────────
   // Serve React CMS SPA from cms/dist at /cms/
   app.register(fastifyStatic, {
@@ -72,6 +90,7 @@ export function buildApp(opts: { logger?: boolean | object } = {}) {
 
   app.register(uiRoutes);
   app.register(cmsAuthRoutes);
+  app.register(statusRoutes);
   app.register(healthRoutes);
   app.register(postsRoutes);
   app.register(mediaRoutes);

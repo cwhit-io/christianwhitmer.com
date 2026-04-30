@@ -29,7 +29,7 @@ export default function Login({ onSuccess }: LoginProps) {
   return (
     <div className="login-wrap">
       <div className="login-card">
-        <h1>✦ Blog CMS</h1>
+        <h1>ChristianWhitmer.com</h1>
         <p className="sub">Sign in to manage your content</p>
         {error && <div className="err-msg">{error}</div>}
         <form onSubmit={handleSubmit} autoComplete="on">

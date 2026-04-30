@@ -30,7 +30,7 @@ export default function Dashboard({ token, user, onLogout }: Props) {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <span className="brand">✦ Blog CMS</span>
+        <span className="brand">✦ ChristianWhitmer.com</span>
         <nav className="app-nav">
           <button
             className={`nav-btn${view.name === 'posts' || view.name === 'editor' ? ' active' : ''}`}
