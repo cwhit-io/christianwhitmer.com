@@ -8,7 +8,7 @@ tags:
   - "infrastructure"
   - "ministry-operations"
   - "volunteers"
-draft: true
+draft: false
 image: "https://r2.cwhit.io/images/blog/most-spiritual-thing-i-did-was-update-firmware/hero.png"
 ---
 
@@ -46,9 +46,9 @@ Let's be honest about what firmware updates actually do, because "you should kee
 
 Firmware is the software baked into your hardware — your access points, your switches, your cameras, your mixing console, your digital signage players. Manufacturers push updates for three main reasons:
 
-- **Security patches** — closing vulnerabilities that could let someone into your network
-- **Bug fixes** — resolving issues that cause crashes, dropouts, or unexpected behavior
-- **Feature improvements** — sometimes you get genuinely useful new functionality for free
+* **Security patches** — closing vulnerabilities that could let someone into your network
+* **Bug fixes** — resolving issues that cause crashes, dropouts, or unexpected behavior
+* **Feature improvements** — sometimes you get genuinely useful new functionality for free
 
 That wireless access point running firmware from 2021 has known security vulnerabilities that are publicly documented. Anyone motivated enough to look them up can find them. Your church network probably isn't a high-value target, but your guest Wi-Fi touches people's personal devices every single Sunday. That's worth taking seriously.
 
@@ -62,11 +62,11 @@ The goal isn't to spend every Tuesday in the network closet. The goal is to make
 
 A simple quarterly rhythm works for most churches:
 
-- **Firmware check** on all networked devices — access points, switches, cameras, AV gear with network connectivity
-- **UPS battery test** — most UPS units have a self-test function; run it and check the runtime estimate
-- **Cable and connection inspection** — look for anything that's fraying, loose, or has been jury-rigged in a way that made sense at the time
-- **Backup verification** — confirm that your offsite or cloud backups actually ran and that you could restore from them
-- **Dust and airflow check** — projectors, amplifiers, and computers in enclosed spaces accumulate dust faster than you'd expect
+* **Firmware check** on all networked devices — access points, switches, cameras, AV gear with network connectivity
+* **UPS battery test** — most UPS units have a self-test function; run it and check the runtime estimate
+* **Cable and connection inspection** — look for anything that's fraying, loose, or has been jury-rigged in a way that made sense at the time
+* **Backup verification** — confirm that your offsite or cloud backups actually ran and that you could restore from them
+* **Dust and airflow check** — projectors, amplifiers, and computers in enclosed spaces accumulate dust faster than you'd expect
 
 Put it on the calendar. Give it a name. "Tech Stewardship Day" if you want to be official about it. "Nerd Tuesday" if your team has a sense of humor. The name doesn't matter. The rhythm does.
 
