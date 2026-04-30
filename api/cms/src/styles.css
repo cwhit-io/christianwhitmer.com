@@ -384,7 +384,7 @@ tr:hover td { background: rgba(255,255,255,0.018); }
   background: var(--surface2);
   cursor: pointer;
 }
-.doc-hero-img { width: 100%; height: 260px; object-fit: cover; object-position: center; display: block; }
+.doc-hero-img { width: 100%; aspect-ratio: 3/2; object-fit: cover; object-position: center; display: block; }
 .doc-hero-overlay {
   position: absolute; inset: 0;
   background: rgba(0,0,0,0.45);
@@ -404,7 +404,7 @@ tr:hover td { background: rgba(255,255,255,0.018); }
 .doc-hero-empty {
   border: 2px dashed var(--border2);
   border-radius: var(--radius-lg);
-  min-height: 130px;
+  aspect-ratio: 3/2;
   margin: 0 0 44px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
   transition: border-color 0.15s, background 0.15s;

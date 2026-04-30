@@ -191,6 +191,7 @@ export async function generateHeroImage(
       filename,
       prompt,
       outputFormat: ext,
+      size: '1536x1024',
       attachAs: 'header',
     }),
   })
