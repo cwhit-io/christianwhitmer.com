@@ -8,6 +8,7 @@ tags:
   - "av"
   - "volunteers"
 draft: true
+image: "https://r2.cwhit.io/images/blog/bill-had-one-eye-church-camera-lighting/hero-1777582657133.png"
 ---
 
 When Bill showed up to volunteer at our church, I was a little nervous.
