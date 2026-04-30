@@ -1,0 +1,248 @@
+openapi: "3.1.0"
+info:
+  title: Blog Media & Image Generation
+  version: "1.0"
+  description: Generate AI hero images and attach them to blog posts. List and delete post media. All endpoints require Bearer token auth. Images are uploaded to Cloudflare R2 and the public URL is written into the post's frontmatter.
+servers:
+  - url: https://blog.cwhit.io
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+paths:
+  /media/generate-and-attach:
+    post:
+      operationId: generateAndAttach
+      summary: Generate an AI hero image and attach it to a post in one call
+      description: |
+        Preferred workflow for adding a hero image to a post.
+        1. Calls the OpenAI Images API server-side using the provided prompt.
+        2. Uploads the resulting image to Cloudflare R2.
+        3. Writes the public R2 URL into the post's `image` frontmatter field (or wherever specified).
+        The base64 payload is never returned to the caller.
+        Use size 1536x1024 for the standard 3:2 landscape hero ratio.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [postSlug, filename, prompt]
+              properties:
+                postSlug:
+                  type: string
+                  description: Slug of the post to attach the image to
+                filename:
+                  type: string
+                  example: hero.webp
+                  description: File name including extension. Extension must match outputFormat (e.g. hero.webp for webp).
+                prompt:
+                  type: string
+                  minLength: 10
+                  description: Detailed image generation prompt. Include style, lighting, and mood.
+                size:
+                  type: string
+                  enum: ["1024x1024", "1536x1024", "1024x1536"]
+                  default: "1536x1024"
+                  description: "1536x1024 = 3:2 landscape (recommended for hero images). 1024x1536 = portrait. 1024x1024 = square."
+                quality:
+                  type: string
+                  enum: [low, medium, high, auto]
+                  default: low
+                outputFormat:
+                  type: string
+                  enum: [png, jpeg, webp]
+                  default: webp
+                placement:
+                  type: string
+                  enum: [frontmatter, body-top, body-after-first-heading]
+                  default: frontmatter
+                  description: Where to attach the image reference in the post
+                field:
+                  type: string
+                  default: image
+                  description: Frontmatter key to set when placement=frontmatter
+                alt:
+                  type: string
+                  description: Alt text for the image
+      responses:
+        "201":
+          description: Image generated, uploaded, and attached to post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  publicUrl:
+                    type: string
+                    description: Full R2 public URL of the generated image
+                  postAttached:
+                    type: boolean
+                    description: Whether the post frontmatter was updated
+                  storage:
+                    type: string
+                    enum: [r2, github]
+                  contentType: { type: string }
+                  bytes: { type: integer }
+                  generation:
+                    type: object
+                    properties:
+                      model: { type: string }
+                      size: { type: string }
+                      quality: { type: string }
+                      outputFormat: { type: string }
+        "500":
+          description: Generation or upload failed
+
+  /media/generate:
+    post:
+      operationId: generateMedia
+      summary: Generate an AI image and upload it without attaching to any post
+      description: Same as generateAndAttach but skips the frontmatter update step. Useful when you want to generate an image first and attach it later with attachMedia.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [postSlug, filename, prompt]
+              properties:
+                postSlug:
+                  type: string
+                  description: Post slug used to determine the storage path
+                filename:
+                  type: string
+                  example: hero.webp
+                prompt: { type: string, minLength: 10 }
+                size:
+                  type: string
+                  enum: ["1024x1024", "1536x1024", "1024x1536"]
+                  default: "1536x1024"
+                quality:
+                  type: string
+                  enum: [low, medium, high, auto]
+                outputFormat:
+                  type: string
+                  enum: [png, jpeg, webp]
+                  default: webp
+      responses:
+        "201":
+          description: Image generated and uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  publicUrl: { type: string }
+                  storage: { type: string }
+                  bytes: { type: integer }
+                  generation:
+                    type: object
+                    properties:
+                      model: { type: string }
+                      size: { type: string }
+                      quality: { type: string }
+
+  /posts/{slug}/attach-media:
+    post:
+      operationId: attachMedia
+      summary: Attach an already-uploaded media file to a post
+      description: Updates post frontmatter or body to reference a file that was previously uploaded. Use this after generateMedia if you want to attach separately.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename]
+              properties:
+                filename:
+                  type: string
+                  description: Filename of the already-uploaded media
+                alt: { type: string }
+                placement:
+                  type: string
+                  enum: [frontmatter, body-top, body-after-first-heading]
+                  default: frontmatter
+                field:
+                  type: string
+                  default: image
+      responses:
+        "200":
+          description: Media attached
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  publicUrl: { type: string }
+                  placement: { type: string }
+                  updated: { type: boolean }
+
+  /media/{postSlug}:
+    get:
+      operationId: listMedia
+      summary: List all media files uploaded for a post
+      parameters:
+        - name: postSlug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Media list (empty array if none)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  postSlug: { type: string }
+                  count: { type: integer }
+                  media:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        filename: { type: string }
+                        publicUrl: { type: string }
+                        size: { type: integer }
+                        sha: { type: string }
+
+  /media/{postSlug}/{filename}:
+    delete:
+      operationId: deleteMedia
+      summary: Delete a media file for a post
+      parameters:
+        - name: postSlug
+          in: path
+          required: true
+          schema: { type: string }
+        - name: filename
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: File deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  deleted: { type: boolean }
+        "404":
+          description: File not found

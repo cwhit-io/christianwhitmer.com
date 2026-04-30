@@ -1,0 +1,216 @@
+openapi: "3.1.0"
+info:
+  title: Blog Posts
+  version: "1.0"
+  description: Create, read, update, publish, and delete blog posts on christianwhitmer.com. Posts are stored as Markdown files in GitHub. All mutating endpoints require Bearer token auth.
+servers:
+  - url: https://blog.cwhit.io
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+paths:
+  /posts:
+    get:
+      operationId: listPosts
+      summary: List all blog posts
+      description: Returns slug, title, description, date, tags, and draft status for every post.
+      responses:
+        "200":
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  count: { type: integer }
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        slug: { type: string }
+                        title: { type: string }
+                        description: { type: string }
+                        author: { type: string }
+                        date: { type: string, format: date }
+                        draft: { type: boolean }
+                        tags:
+                          type: array
+                          items: { type: string }
+
+    post:
+      operationId: createPost
+      summary: Create a new blog post
+      description: Creates a Markdown file committed to GitHub. The slug is auto-derived from the title if omitted. Set draft=true to save without publishing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, description, body]
+              properties:
+                title:
+                  type: string
+                  description: Post title (also used to derive the slug)
+                description:
+                  type: string
+                  description: Short excerpt shown in post cards and meta tags
+                body:
+                  type: string
+                  description: Full post body in Markdown
+                slug:
+                  type: string
+                  description: URL slug. Auto-derived from title if omitted.
+                author:
+                  type: string
+                  description: Defaults to DEFAULT_AUTHOR env var if omitted
+                date:
+                  type: string
+                  format: date
+                  description: Defaults to today if omitted
+                tags:
+                  type: array
+                  items: { type: string }
+                draft:
+                  type: boolean
+                  default: false
+      responses:
+        "201":
+          description: Post created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  action: { type: string }
+                  slug: { type: string }
+                  path: { type: string }
+        "409":
+          description: A post with this slug already exists
+
+  /posts/{slug}:
+    parameters:
+      - name: slug
+        in: path
+        required: true
+        schema: { type: string }
+        description: URL-safe post slug (e.g. my-first-post)
+
+    get:
+      operationId: getPost
+      summary: Get a blog post including its full Markdown body and frontmatter
+      responses:
+        "200":
+          description: Post found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  slug: { type: string }
+                  frontmatter:
+                    type: object
+                    description: Parsed YAML frontmatter as key-value pairs
+                    properties:
+                      title: { type: string }
+                      description: { type: string }
+                      author: { type: string }
+                      date: { type: string }
+                      tags:
+                        type: array
+                        items: { type: string }
+                      draft: { type: boolean }
+                      image: { type: string }
+                  body:
+                    type: string
+                    description: Markdown body (everything after the frontmatter)
+                  markdown:
+                    type: string
+                    description: Complete raw Markdown file content including frontmatter
+        "404":
+          description: Post not found
+
+    put:
+      operationId: updatePost
+      summary: Update a blog post — merges provided fields into existing frontmatter and replaces body if supplied
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                description: { type: string }
+                author: { type: string }
+                date: { type: string, format: date }
+                tags:
+                  type: array
+                  items: { type: string }
+                draft: { type: boolean }
+                body:
+                  type: string
+                  description: Full Markdown body. Replaces existing body if provided.
+      responses:
+        "200":
+          description: Post updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  action: { type: string }
+                  slug: { type: string }
+        "404":
+          description: Post not found
+
+    delete:
+      operationId: deletePost
+      summary: Permanently delete a blog post from GitHub
+      responses:
+        "200":
+          description: Post deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  action: { type: string }
+                  slug: { type: string }
+        "404":
+          description: Post not found
+
+  /posts/{slug}/publish:
+    post:
+      operationId: publishPost
+      summary: Publish a draft post by setting draft=false
+      description: Convenience endpoint — equivalent to updatePost with draft=false.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Post published
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  action: { type: string }
+                  slug: { type: string }
+        "404":
+          description: Post not found
