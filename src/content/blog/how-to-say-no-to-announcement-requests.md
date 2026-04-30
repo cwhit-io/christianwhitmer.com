@@ -7,7 +7,7 @@ tags:
   - "communications"
   - "ministry-operations"
   - "volunteers"
-draft: true
+draft: false
 image: "https://r2.cwhit.io/images/blog/how-to-say-no-to-announcement-requests/hero.png"
 ---
 
@@ -26,10 +26,11 @@ If your announcement process lives only in your head, it doesn't exist. People c
 Write it down. Put it somewhere findable — a shared Google Doc, your church's intranet, a pinned message in your staff Slack channel. It doesn't need to be a policy manual. A single page works fine.
 
 At minimum, your written process should answer:
-- **Who can submit requests?** Ministry leaders only, or any staff member?
-- **How do they submit?** Email, a form, a project management tool?
-- **What information is required?** Event name, date, audience, ask, and any graphics or links needed.
-- **When is the deadline?** (More on this in a minute.)
+
+* **Who can submit requests?** Ministry leaders only, or any staff member?
+* **How do they submit?** Email, a form, a project management tool?
+* **What information is required?** Event name, date, audience, ask, and any graphics or links needed.
+* **When is the deadline?** (More on this in a minute.)
 
 When someone submits a last-minute request and you have to say no, you're not being difficult — you're pointing them back to a process that exists to serve everyone fairly. That's a very different conversation.
 
@@ -56,9 +57,9 @@ This is the part most communications teams are too gracious about — and it cos
 
 Pick a deadline and publish it. Something like:
 
-- **Tier 1 requests:** 3 weeks before the event
-- **Tier 2 requests:** 10 days before the event
-- **Tier 3 / self-serve:** No submission needed
+* **Tier 1 requests:** 3 weeks before the event
+* **Tier 2 requests:** 10 days before the event
+* **Tier 3 / self-serve:** No submission needed
 
 Then hold the deadline. Every time you make an exception, you teach people that the deadline is optional. And once that lesson is learned, it's very hard to undo.
 
@@ -69,11 +70,12 @@ When someone misses the deadline, the answer isn't "no, never." It's "we can't g
 "No" lands much softer when it comes with a redirect. Before you ever have to turn down a request, build a mental (or literal) list of what else is available.
 
 Some options worth having ready:
-- **Ministry-specific email lists** — great for targeted audiences
-- **Church app push notifications** — fast and direct for urgent needs
-- **Social media stories** — lower commitment than a feed post, good for short-window events
-- **Lobby signage or table tents** — underrated, especially for in-person events
-- **Sunday morning verbal announcements from a ministry leader** — sometimes the most effective option of all
+
+* **Ministry-specific email lists** — great for targeted audiences
+* **Church app push notifications** — fast and direct for urgent needs
+* **Social media stories** — lower commitment than a feed post, good for short-window events
+* **Lobby signage or table tents** — underrated, especially for in-person events
+* **Sunday morning verbal announcements from a ministry leader** — sometimes the most effective option of all
 
 When you redirect someone to an alternative channel, you're not dismissing their request. You're helping them find the right tool for what they're actually trying to accomplish.
 
@@ -83,9 +85,9 @@ Here's the honest truth: most people aren't upset about the "no." They're upset 
 
 A few phrases worth keeping in your back pocket:
 
-- *"We missed the window for this Sunday, but let's get it on the calendar for next week and do it right."*
-- *"This one's a great fit for a targeted email to your group — want me to help you set that up?"*
-- *"We're keeping the slides to four items this week, but I can get you on the list for the following Sunday."*
+* *"We missed the window for this Sunday, but let's get it on the calendar for next week and do it right."*
+* *"This one's a great fit for a targeted email to your group — want me to help you set that up?"*
+* *"We're keeping the slides to four items this week, but I can get you on the list for the following Sunday."*
 
 You're not a vending machine that dispenses announcements. You're a communications partner. Talking like one changes the whole dynamic.
 
