@@ -84,7 +84,7 @@ export default function PostsList({ token, onEdit, onNewPost }: Props) {
               <th>Slug</th>
               <th>Status</th>
               <th>Date</th>
-              <th style={{ width: 200 }}></th>
+              <th style={{ width: '1%', whiteSpace: 'nowrap' }}></th>
             </tr>
           </thead>
           <tbody>
@@ -103,7 +103,7 @@ export default function PostsList({ token, onEdit, onNewPost }: Props) {
                   </span>
                 </td>
                 <td className="muted">{p.date ? String(p.date).slice(0, 10) : '—'}</td>
-                <td>
+                <td style={{ whiteSpace: 'nowrap' }}>
                   <div className="row-actions">
                     <button className="ghost btn-sm" onClick={() => onEdit(p.slug)}>Edit</button>
                     {p.draft && (
