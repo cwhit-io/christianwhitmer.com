@@ -8,7 +8,7 @@ tags:
   - "av"
   - "volunteers"
   - "ministry-operations"
-draft: true
+draft: false
 image: "https://r2.cwhit.io/images/blog/room-mix-vs-livestream-mix/hero.png"
 ---
 
@@ -46,13 +46,13 @@ Most modern digital consoles — including the Behringer X32, which is running i
 
 Set up post-fader aux sends for each of these groups and route them to your stream output:
 
-- **Audience/room mics** — this is the single biggest thing most churches are missing from their stream mix (more on placement in a minute)
-- **Preacher/speaker** — give this its own send so you can boost presence and intelligibility for online listeners
-- **Singers** — group them and send as a unit
-- **Click/guide track** — if you're running one, it needs to be in the stream mix
-- **Band** — keys, bass, anything going direct
-- **Guitars** — if your guitarists are running amps, they may not be in the main mix much because the room handles it; the stream needs them
-- **Drums** — same idea; the room hears the kit acoustically, the stream only hears what you send
+* **Audience/room mics** — this is the single biggest thing most churches are missing from their stream mix (more on placement in a minute)
+* **Preacher/speaker** — give this its own send so you can boost presence and intelligibility for online listeners
+* **Singers** — group them and send as a unit
+* **Click/guide track** — if you're running one, it needs to be in the stream mix
+* **Band** — keys, bass, anything going direct
+* **Guitars** — if your guitarists are running amps, they may not be in the main mix much because the room handles it; the stream needs them
+* **Drums** — same idea; the room hears the kit acoustically, the stream only hears what you send
 
 **Post-fader is important.** When you ride the main mix up or down, the stream follows. You're not managing two independent mixes — you're making relative adjustments on top of a mix that's already working. Boost the things online listeners can't hear naturally (voices, presence, definition). Pull back the things the room already provides (drum bleed, amp wash, low-end mud).
 
