@@ -9,7 +9,7 @@ tags:
   - "church-tech"
   - "ministry-operations"
 draft: false
-image: "https://r2.cwhit.io/images/blog/five-things-comms-director-stop-doing-manually/five-things-comms-director-hero.webp"
+image: "https://r2.cwhit.io/images/blog/five-things-comms-director-stop-doing-manually/hero.png"
 imageAlt: "Church communications office desk with laptop, social media notifications, sticky notes, and printed bulletins — Five Things Your Communications Director Could Stop Doing Manually Right Now"
 ---
 
