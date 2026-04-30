@@ -8,7 +8,7 @@ tags:
   - "networking"
   - "infrastructure"
   - "volunteers"
-draft: true
+draft: false
 image: "https://r2.cwhit.io/images/blog/church-wifi-audit-anyone-can-do/hero.png"
 ---
 
@@ -48,14 +48,14 @@ This is the one most churches skip, and it's usually the reason Sunday mornings 
 
 Make a list of every device that needs Wi-Fi during a service:
 
-- Livestream encoder or laptop
-- Check-in tablets or computers
-- Planning Center or ProPresenter machines
-- Stage monitor apps (like Aviom or personal monitor apps)
-- Pastor's tablet or phone for sermon notes
-- Confidence monitors
-- Any cameras on Wi-Fi
-- Volunteer phones running apps
+* Livestream encoder or laptop
+* Check-in tablets or computers
+* Planning Center or ProPresenter machines
+* Stage monitor apps (like Aviom or personal monitor apps)
+* Pastor's tablet or phone for sermon notes
+* Confidence monitors
+* Any cameras on Wi-Fi
+* Volunteer phones running apps
 
 Now ask: are any of these on the same network as 200 guests and their phones?
 
@@ -67,10 +67,10 @@ Here's where people get stuck. They don't know what they're aiming for, so they 
 
 A rough baseline for a healthy church network:
 
-- **Livestream:** 5–10 Mbps upload, stable, with no competing traffic on that connection
-- **Check-in:** Any reliable connection works — it's low bandwidth, but it needs to be *consistent*
-- **Staff and volunteers:** 10–25 Mbps down is plenty for most ministry applications
-- **Guests:** Enough to browse and check in to social media — you're not running a hotel, but you want it to work
+* **Livestream:** 5–10 Mbps upload, stable, with no competing traffic on that connection
+* **Check-in:** Any reliable connection works — it's low bandwidth, but it needs to be *consistent*
+* **Staff and volunteers:** 10–25 Mbps down is plenty for most ministry applications
+* **Guests:** Enough to browse and check in to social media — you're not running a hotel, but you want it to work
 
 Run a speed test at **fast.com** or **speedtest.net** from the spots where your critical devices live. Not from your office. From the actual location where the device sits on Sunday morning. That number is what matters.
 
