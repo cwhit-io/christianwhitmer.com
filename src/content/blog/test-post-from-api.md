@@ -8,7 +8,6 @@ tags:
   - "api"
   - "astro"
 draft: false
-image: "/images/blog/test-post-from-api/hero-1777519715767.jpg"
 ---
 
 This is a test post created by the API.
