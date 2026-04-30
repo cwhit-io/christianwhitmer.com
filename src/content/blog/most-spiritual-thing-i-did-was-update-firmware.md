@@ -9,6 +9,7 @@ tags:
   - "ministry-operations"
   - "volunteers"
 draft: false
+image: "https://r2.cwhit.io/images/blog/most-spiritual-thing-i-did-was-update-firmware/hero.png"
 ---
 
 Nobody clapped. There was no moment of celebration. The worship team didn't stop rehearsal to acknowledge it. The pastor didn't mention it from the pulpit.
