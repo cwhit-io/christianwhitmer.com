@@ -47,11 +47,11 @@ Those are the problems worth solving.
 
 If you want better audio quality in your church, here's where the real gains are:
 
-- **Mic placement** — A well-placed dynamic mic beats a poorly placed condenser every time.
-- **Gain staging** — If your signal is clipping at the preamp, no sample rate will fix that.
-- **Room treatment** — Hard floors, bare walls, and a low ceiling will ruin audio that was recorded at 96kHz just as fast as 44.1kHz.
-- **Consistent monitoring** — Use headphones in the booth. Know what your mix actually sounds like, not what you think it sounds like.
-- **Cable quality and signal path** — Noise introduced before the signal hits your interface doesn't care about your sample rate.
+* **Mic placement** — A well-placed dynamic mic beats a poorly placed condenser every time.
+* **Gain staging** — If your signal is clipping at the preamp, no sample rate will fix that.
+* **Room treatment** — Hard floors, bare walls, and a low ceiling will ruin audio that was recorded at 96kHz just as fast as 44.1kHz.
+* **Consistent monitoring** — Use headphones in the booth. Know what your mix actually sounds like, not what you think it sounds like.
+* **Cable quality and signal path** — Noise introduced before the signal hits your interface doesn't care about your sample rate.
 
 These are the unglamorous, unsexy things that actually move the needle.
 
