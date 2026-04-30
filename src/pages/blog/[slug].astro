@@ -69,24 +69,18 @@ const heroSrc = post.data.image
             </div>
         </header>
 
-        {
-        {(post.data.image || post.data.headerImage) && (() => {
-                const heroSrc = post.data.image
-                    ? (post.data.image.startsWith('http') ? post.data.image : `https://${post.data.image}`)
-                    : `/blog/${slug}/${post.data.headerImage}`;
-                return (
-                    <div class="article-image">
-                        <img
-                            src={heroSrc}
-                            alt={post.data.title}
-                            loading="eager"
-                            fetchpriority="high"
-                            decoding="async"
-                            transition:name={`post-image-${slug}`}
-                        />
-                    </div>
-                );
-            })()}
+        {heroSrc && (
+                <div class="article-image">
+                    <img
+                        src={heroSrc}
+                        alt={post.data.title}
+                        loading="eager"
+                        fetchpriority="high"
+                        decoding="async"
+                        transition:name={`post-image-${slug}`}
+                    />
+                </div>
+            )}
         }
 
         <div class="prose max-w-none">
