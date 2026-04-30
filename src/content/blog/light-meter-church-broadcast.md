@@ -44,6 +44,8 @@ The meter I recommend for church use is the **[Sekonic L-308X-U Flashmate](https
 
 It runs around $200, which sounds like a lot until you consider what you've already spent on cameras and lights. It's simple enough that a volunteer can learn it in about ten minutes. It handles both continuous light (your LED stage wash) and flash, so it'll serve you well beyond just Sunday morning. And it's accurate enough that professionals use it — you're not buying a toy.
 
+![Sekonic L-308X-U Flashmate Light Meter](https://m.media-amazon.com/images/I/712OZmn3D6L._AC_SY741_.jpg)
+
 For a church broadcast context, it's the right tool at the right price.
 
 ## How to Use It on Your Stage
