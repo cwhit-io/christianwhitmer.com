@@ -8,6 +8,7 @@ tags:
   - "av"
   - "volunteers"
 draft: true
+image: "https://r2.cwhit.io/images/blog/light-meter-church-broadcast/hero-1777583055195.png"
 ---
 
 Most churches dial in their stage lighting the same way: somebody stands on the stage, somebody else squints from the back of the room, they go back and forth a few times, and eventually somebody says "yeah, that looks good." And for the room, it usually does look good.
