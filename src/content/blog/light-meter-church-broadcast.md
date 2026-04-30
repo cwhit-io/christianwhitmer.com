@@ -7,7 +7,7 @@ tags:
   - "church-tech"
   - "av"
   - "volunteers"
-draft: true
+draft: false
 image: "https://r2.cwhit.io/images/blog/light-meter-church-broadcast/hero-1777583055195.png"
 ---
 
@@ -41,11 +41,9 @@ That's the whole workflow.
 
 I was first introduced to light meters by Bill — a retired Hollywood grip who volunteered at our church for a season and had a way of making complicated things feel simple. I've written about him before. He handed me a meter one afternoon during a lighting session and said something to the effect of "stop guessing." He was right.
 
-The meter I recommend for church use is the **[Sekonic L-308X-U Flashmate](https://www.amazon.com/Sekonic-L-308X-U-Flashmate-Light-401-305/dp/B079YWCZNC/ref=sr_1_17?crid=B0KUZMLMBAUT&dib=eyJ2IjoiMSJ9.KFi2n5JPMR5C6ZXhFkr3SBaOxkOwiqay--o9bYAxET4Mnhc0tJCHK2RttLfMzRAq8v1E8f1C6ZPtwTNQNZy2AmIAwtst4G7CcjNTV_s22EK9Z4XhN38E_Dh-rV83MKN6vb9bbKjasU7zQ3MN6cZf4T_s440cIar2I70gzgl5iWTLYg3ukyZSXFDvHAWjWX05Tdfmfa0WDwfdVn_q8YoM3CLBGzjFFxQEKZ06lCPFdhU.YUlE1d1DXdk-LozHCgP01RQkyuzVxdS8J0KPrbfZv0M&dib_tag=se&keywords=light+meter&qid=1777582714&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D&sprefix=light+meter%2Caps%2C134&sr=8-17)**.
+The meter I recommend for church use is the [Sekonic L-308X-U Flashmate](https://www.amazon.com/Sekonic-L-308X-U-Flashmate-Light-401-305/dp/B079YWCZNC/ref=sr_1_17?crid=B0KUZMLMBAUT\&dib=eyJ2IjoiMSJ9.KFi2n5JPMR5C6ZXhFkr3SBaOxkOwiqay--o9bYAxET4Mnhc0tJCHK2RttLfMzRAq8v1E8f1C6ZPtwTNQNZy2AmIAwtst4G7CcjNTV_s22EK9Z4XhN38E_Dh-rV83MKN6vb9bbKjasU7zQ3MN6cZf4T_s440cIar2I70gzgl5iWTLYg3ukyZSXFDvHAWjWX05Tdfmfa0WDwfdVn_q8YoM3CLBGzjFFxQEKZ06lCPFdhU.YUlE1d1DXdk-LozHCgP01RQkyuzVxdS8J0KPrbfZv0M\&dib_tag=se\&keywords=light+meter\&qid=1777582714\&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D\&sprefix=light+meter%2Caps%2C134\&sr=8-17).
 
 It runs around $200, which sounds like a lot until you consider what you've already spent on cameras and lights. It's simple enough that a volunteer can learn it in about ten minutes. It handles both continuous light (your LED stage wash) and flash, so it'll serve you well beyond just Sunday morning. And it's accurate enough that professionals use it — you're not buying a toy.
-
-![Sekonic L-308X-U Flashmate Light Meter](https://m.media-amazon.com/images/I/712OZmn3D6L._AC_SY741_.jpg)
 
 For a church broadcast context, it's the right tool at the right price.
 
