@@ -586,4 +586,62 @@ export async function postsRoutes(app: FastifyInstance): Promise<void> {
       }
     }
   );
+
+  // ── GPT Actions alias routes ───────────────────────────────────────────────
+  // GPT Actions only picks up the first HTTP method per path, so these unique
+  // POST-only paths proxy to the canonical REST routes.
+
+  // POST /posts/create  →  POST /posts
+  app.post(
+    "/posts/create",
+    { preHandler: [requireAuth] },
+    async (request, reply) => {
+      const result = await app.inject({
+        method: "POST",
+        url: "/posts",
+        headers: {
+          "content-type": "application/json",
+          authorization: (request.headers.authorization as string) || "",
+        },
+        payload: JSON.stringify(request.body),
+      });
+      return reply.code(result.statusCode).type("application/json").send(result.body);
+    }
+  );
+
+  // POST /posts/:slug/update  →  PUT /posts/:slug
+  app.post(
+    "/posts/:slug/update",
+    { preHandler: [requireAuth] },
+    async (request, reply) => {
+      const { slug } = request.params as { slug: string };
+      const result = await app.inject({
+        method: "PUT",
+        url: `/posts/${encodeURIComponent(slug)}`,
+        headers: {
+          "content-type": "application/json",
+          authorization: (request.headers.authorization as string) || "",
+        },
+        payload: JSON.stringify(request.body),
+      });
+      return reply.code(result.statusCode).type("application/json").send(result.body);
+    }
+  );
+
+  // POST /posts/:slug/remove  →  DELETE /posts/:slug
+  app.post(
+    "/posts/:slug/remove",
+    { preHandler: [requireAuth] },
+    async (request, reply) => {
+      const { slug } = request.params as { slug: string };
+      const result = await app.inject({
+        method: "DELETE",
+        url: `/posts/${encodeURIComponent(slug)}`,
+        headers: {
+          authorization: (request.headers.authorization as string) || "",
+        },
+      });
+      return reply.code(result.statusCode).type("application/json").send(result.body);
+    }
+  );
 }
