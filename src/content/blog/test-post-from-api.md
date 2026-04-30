@@ -8,6 +8,7 @@ tags:
   - "api"
   - "astro"
 draft: false
+image: "/images/blog/test-post-from-api/hero.jpg"
 ---
 
 ![Developer desk with laptop showing code editor, coffee mug, and handwritten notebook in warm ambient lighting](/images/blog/test-post-from-api/developer-desk-hero.webp)
