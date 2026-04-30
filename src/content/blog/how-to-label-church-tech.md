@@ -9,6 +9,7 @@ tags:
   - "infrastructure"
   - "volunteers"
 draft: true
+image: "https://r2.cwhit.io/images/blog/how-to-label-church-tech/hero.png"
 ---
 
 Somewhere in your church right now, there is a cable. It runs behind a wall, under a carpet, or through a conduit nobody has touched since 2009. One end disappears into a rack. The other end disappears into a mystery.
