@@ -176,6 +176,28 @@ function fileToBase64(file: File): Promise<string> {
   })
 }
 
+export async function generateHeroImage(
+  token: string,
+  postSlug: string,
+  prompt: string,
+): Promise<{ url: string }> {
+  const ext = 'webp'
+  const filename = `hero-${Date.now()}.${ext}`
+  const res = await fetch('/media/generate-and-attach', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({
+      postSlug,
+      filename,
+      prompt,
+      outputFormat: ext,
+      attachAs: 'header',
+    }),
+  })
+  const data = await handleResponse<{ ok: boolean; publicUrl: string; url?: string }>(res)
+  return { url: data.publicUrl || data.url || '' }
+}
+
 export async function uploadMedia(
   token: string,
   postSlug: string,

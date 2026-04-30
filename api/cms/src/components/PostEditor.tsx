@@ -21,13 +21,12 @@ import {
   DiffSourceToggleWrapper,
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
-import { getPost, createPost, updatePost, uploadMedia } from '../lib/api'
+import { getPost, createPost, updatePost, uploadMedia, generateHeroImage } from '../lib/api'
 
 interface Props {
   token: string
   slug: string | null   // null = new post
   onBack: () => void
-  onOpenMedia: (postSlug: string) => void
 }
 
 interface FormState {
@@ -45,7 +44,7 @@ const emptyForm = (): FormState => ({
   title: '', description: '', author: '', date: today(), tags: '', draft: true, body: '',
 })
 
-export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMedia }: Props) {
+export default function PostEditor({ token, slug: initialSlug, onBack }: Props) {
   const [slug, setSlug] = useState<string | null>(initialSlug)
   const [form, setForm] = useState<FormState>(emptyForm())
   const [loading, setLoading] = useState(!!initialSlug)
@@ -55,6 +54,9 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
+  const [genModal, setGenModal] = useState(false)
+  const [genPrompt, setGenPrompt] = useState('')
+  const [generating, setGenerating] = useState(false)
   const editorKey = useRef(0)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -168,6 +170,23 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
     }
   }, [token, slug, showToast])
 
+  const handleGenerate = useCallback(async () => {
+    if (!slug) { showToast('Save the post first to generate an image', 'err'); return }
+    if (!genPrompt.trim()) return
+    setGenerating(true)
+    try {
+      const r = await generateHeroImage(token, slug, genPrompt.trim())
+      setImageUrl(r.url)
+      setGenModal(false)
+      setGenPrompt('')
+      showToast('Image generated!')
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : 'Generation failed', 'err')
+    } finally {
+      setGenerating(false)
+    }
+  }, [token, slug, genPrompt, showToast])
+
   const handleRemoveImage = useCallback(async () => {
     if (!slug) return
     try {
@@ -197,11 +216,6 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
       <div className="editor-top">
         <button className="ghost btn-sm" onClick={onBack}>← Posts</button>
         <span className="editor-slug-label mono muted">{slug ?? 'New Post'}</span>
-        {slug && (
-          <button className="ghost btn-sm" onClick={() => onOpenMedia(slug)}>
-            Media
-          </button>
-        )}
         <div style={{ flex: 1 }} />
         <div className="editor-btns">
           <button className="ghost" onClick={() => save(true)} disabled={saving}>
@@ -304,7 +318,14 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
               >
-                {uploading ? <span className="spinner" /> : '↑ Replace'}
+                ↑ Replace
+              </button>
+              <button
+                className="ghost btn-sm doc-hero-btn"
+                onClick={() => setGenModal(true)}
+                disabled={uploading}
+              >
+                ✦ Generate
               </button>
               <button
                 className="ghost btn-sm doc-hero-btn doc-hero-btn-remove"
@@ -339,7 +360,22 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
                 <span className="doc-hero-label">
                   {slug ? 'Add header image' : 'Save post first to add a header image'}
                 </span>
-                {slug && <span className="muted" style={{ fontSize: 11 }}>Drop a file or click to browse</span>}
+                {slug && (
+                  <div className="doc-hero-empty-actions">
+                    <button
+                      className="ghost btn-sm"
+                      onClick={e => { e.stopPropagation(); fileRef.current?.click() }}
+                    >
+                      ↑ Upload
+                    </button>
+                    <button
+                      className="ghost btn-sm"
+                      onClick={e => { e.stopPropagation(); setGenModal(true) }}
+                    >
+                      ✦ Generate
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -348,7 +384,7 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
         {/* ── Body ──────────────────────────────────────────────────────────────── */}
         <MDXEditor
           key={editorKey.current}
-          className="dark-editor doc-mdx-editor"
+          className="dark dark-editor doc-mdx-editor"
           markdown={form.body}
           onChange={v => setForm(f => ({ ...f, body: v }))}
           plugins={[
@@ -383,6 +419,40 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
 
       {toast && (
         <div className={`toast-fixed toast ${toast.type}`}>{toast.msg}</div>
+      )}
+
+      {genModal && (
+        <div className="modal-backdrop" onClick={() => !generating && setGenModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-hdr">
+              <h3>Generate Header Image</h3>
+              <button className="modal-close" onClick={() => !generating && setGenModal(false)} disabled={generating}>✕</button>
+            </div>
+            <div className="modal-body">
+              <label htmlFor="gen-prompt">Image prompt</label>
+              <textarea
+                id="gen-prompt"
+                className="gen-prompt-ta"
+                rows={4}
+                placeholder="Describe the image you want to generate…"
+                value={genPrompt}
+                onChange={e => setGenPrompt(e.target.value)}
+                disabled={generating}
+                autoFocus
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleGenerate()
+                }}
+              />
+              <p className="modal-hint">Tip: be descriptive — include style, lighting, and mood. ⌘↵ to generate.</p>
+            </div>
+            <div className="modal-footer">
+              <button className="ghost" onClick={() => setGenModal(false)} disabled={generating}>Cancel</button>
+              <button onClick={handleGenerate} disabled={generating || !genPrompt.trim()}>
+                {generating ? <><span className="spinner" /> Generating…</> : '✦ Generate'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

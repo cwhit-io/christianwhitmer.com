@@ -5,10 +5,9 @@ interface Props {
   token: string
   onEdit: (slug: string) => void
   onNewPost: () => void
-  onOpenMedia: (postSlug: string) => void
 }
 
-export default function PostsList({ token, onEdit, onNewPost, onOpenMedia }: Props) {
+export default function PostsList({ token, onEdit, onNewPost }: Props) {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -107,7 +106,6 @@ export default function PostsList({ token, onEdit, onNewPost, onOpenMedia }: Pro
                 <td>
                   <div className="row-actions">
                     <button className="ghost btn-sm" onClick={() => onEdit(p.slug)}>Edit</button>
-                    <button className="ghost btn-sm" onClick={() => onOpenMedia(p.slug)}>Media</button>
                     {p.draft && (
                       <button className="success btn-sm" onClick={() => handlePublish(p.slug)}>Publish</button>
                     )}
