@@ -64,11 +64,10 @@ export interface UpdatePostInput {
   image?: string
 }
 
-function authHeaders(token: string): Record<string, string> {
-  return {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  }
+function authHeaders(token: string, withBody = false): Record<string, string> {
+  const headers: Record<string, string> = { Authorization: `Bearer ${token}` }
+  if (withBody) headers['Content-Type'] = 'application/json'
+  return headers
 }
 
 async function handleResponse<T>(res: Response): Promise<T> {
@@ -115,7 +114,7 @@ export async function getPost(token: string, slug: string): Promise<PostDetail> 
 export async function createPost(token: string, body: CreatePostInput): Promise<{ slug: string }> {
   const res = await fetch('/posts', {
     method: 'POST',
-    headers: authHeaders(token),
+    headers: authHeaders(token, true),
     body: JSON.stringify(body),
   })
   return handleResponse<{ ok: boolean; slug: string }>(res)
@@ -124,7 +123,7 @@ export async function createPost(token: string, body: CreatePostInput): Promise<
 export async function updatePost(token: string, slug: string, body: UpdatePostInput): Promise<void> {
   const res = await fetch(`/posts/${encodeURIComponent(slug)}`, {
     method: 'PUT',
-    headers: authHeaders(token),
+    headers: authHeaders(token, true),
     body: JSON.stringify(body),
   })
   await handleResponse<{ ok: boolean }>(res)
@@ -185,7 +184,7 @@ export async function generateHeroImage(
   const filename = `hero-${Date.now()}.${ext}`
   const res = await fetch('/media/generate-and-attach', {
     method: 'POST',
-    headers: authHeaders(token),
+    headers: authHeaders(token, true),
     body: JSON.stringify({
       postSlug,
       filename,
@@ -208,7 +207,7 @@ export async function uploadMedia(
   const contentBase64 = await fileToBase64(file)
   const res = await fetch('/media', {
     method: 'POST',
-    headers: authHeaders(token),
+    headers: authHeaders(token, true),
     body: JSON.stringify({
       postSlug,
       filename,
@@ -238,7 +237,7 @@ export async function generateImage(
   const outputFormat = extToOutputFormat(filename)
   const res = await fetch('/media/generate', {
     method: 'POST',
-    headers: authHeaders(token),
+    headers: authHeaders(token, true),
     body: JSON.stringify({
       postSlug,
       filename,
@@ -261,7 +260,7 @@ export async function generateAndAttach(
   const outputFormat = extToOutputFormat(filename)
   const res = await fetch('/media/generate-and-attach', {
     method: 'POST',
-    headers: authHeaders(token),
+    headers: authHeaders(token, true),
     body: JSON.stringify({
       postSlug,
       filename,
