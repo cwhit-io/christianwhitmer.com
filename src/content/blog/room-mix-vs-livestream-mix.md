@@ -9,6 +9,7 @@ tags:
   - "volunteers"
   - "ministry-operations"
 draft: true
+image: "https://r2.cwhit.io/images/blog/room-mix-vs-livestream-mix/hero.png"
 ---
 
 It usually starts with a Facebook message. Or a text to the worship pastor. Or someone catching the sound engineer in the lobby after service with that look on their face.
