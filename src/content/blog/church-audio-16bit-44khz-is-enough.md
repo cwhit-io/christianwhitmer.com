@@ -9,7 +9,7 @@ tags:
   - "volunteers"
   - "ministry-operations"
 draft: false
-image: "https://r2.cwhit.io/images/blog/church-audio-16bit-44khz-is-enough/church-audio-booth-sunday-morning.webp"
+image: "https://r2.cwhit.io/images/blog/church-audio-16bit-44khz-is-enough/hero.png"
 imageAlt: "Church audio mixing booth with a console, headphones, laptop, and XLR cables on a Sunday morning"
 ---
 
