@@ -8,7 +8,7 @@ tags:
   - "av"
   - "infrastructure"
   - "volunteers"
-draft: true
+draft: false
 image: "https://r2.cwhit.io/images/blog/how-to-label-church-tech/hero.png"
 ---
 
@@ -28,9 +28,9 @@ A cable labeled on only one end is a puzzle. A cable labeled on both ends is inf
 
 For cable labels, a few things that actually work:
 
-- **Brady or Brother P-touch label makers** with heat-shrink or wrap-around labels hold up well in AV environments
-- **Color-coded electrical tape** works for quick visual grouping — all audio cables get blue, video gets yellow, network gets gray
-- **Velcro cable tags** are great for snake bundles and stage boxes where you need something that survives being coiled and uncoiled repeatedly
+* **Brady or Brother P-touch label makers** with heat-shrink or wrap-around labels hold up well in AV environments
+* **Color-coded electrical tape** works for quick visual grouping — all audio cables get blue, video gets yellow, network gets gray
+* **Velcro cable tags** are great for snake bundles and stage boxes where you need something that survives being coiled and uncoiled repeatedly
 
 Label with a short, consistent naming convention. `STAGE-L`, `FOH-IN-3`, `CAM-1-PWR`. Whatever system you choose, write it down somewhere so the next person can follow it — not just read the labels, but understand the logic behind them.
 
@@ -85,10 +85,11 @@ Here's where things get genuinely useful. A QR code sticker on a piece of gear c
 Tools like QR Code Generator or even Google Drive's shareable links make this easy. Print the QR code, laminate it if it's going somewhere it'll get handled, and stick it on the gear.
 
 Some ideas for where this works well:
-- **Rack gear** — link to a PDF of the manual or your internal setup notes
-- **Wireless mic systems** — link to a frequency coordination chart or a quick-start guide for volunteers
-- **Projectors and displays** — link to input switching instructions
-- **Network switches** — link to a diagram of what's plugged into each port
+
+* **Rack gear** — link to a PDF of the manual or your internal setup notes
+* **Wireless mic systems** — link to a frequency coordination chart or a quick-start guide for volunteers
+* **Projectors and displays** — link to input switching instructions
+* **Network switches** — link to a diagram of what's plugged into each port
 
 You're essentially building a self-service knowledge base that lives right where the gear is. Colossians 3:23 says to do your work heartily, as for the Lord — and honestly, a well-documented tech environment is exactly that kind of work. It serves the next person as much as it serves you.
 
