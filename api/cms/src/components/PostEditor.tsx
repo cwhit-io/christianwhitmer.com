@@ -9,12 +9,16 @@ import {
   markdownShortcutPlugin,
   linkPlugin,
   linkDialogPlugin,
+  imagePlugin,
+  diffSourcePlugin,
   BoldItalicUnderlineToggles,
   BlockTypeSelect,
   CreateLink,
   ListsToggle,
+  InsertImage,
   Separator,
   UndoRedo,
+  DiffSourceToggleWrapper,
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 import { getPost, createPost, updatePost, uploadMedia } from '../lib/api'
@@ -51,15 +55,8 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
-  const [rawMode, setRawMode] = useState(false)
   const editorKey = useRef(0)
   const fileRef = useRef<HTMLInputElement>(null)
-  const bodyRef = useRef<HTMLTextAreaElement>(null)
-
-  function toggleRaw() {
-    if (rawMode) editorKey.current++ // remount MDXEditor with latest body
-    setRawMode(r => !r)
-  }
 
   const showToast = useCallback((msg: string, type: 'ok' | 'err' = 'ok') => {
     setToast({ msg, type })
@@ -91,14 +88,6 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
       .catch(e => setError(e instanceof Error ? e.message : 'Failed to load post'))
       .finally(() => setLoading(false))
   }, [token, initialSlug])
-
-  // Auto-resize body textarea
-  useEffect(() => {
-    const ta = bodyRef.current
-    if (!ta) return
-    ta.style.height = 'auto'
-    ta.style.height = ta.scrollHeight + 'px'
-  }, [form.body])
 
   const field = (key: keyof FormState) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -162,6 +151,23 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
     }
   }, [token, slug, showToast])
 
+  // Used by MDXEditor imagePlugin for in-body image uploads
+  const imageUploadHandler = useCallback(async (file: File): Promise<string> => {
+    if (!slug) {
+      showToast('Save the post first to upload images', 'err')
+      throw new Error('Post must be saved before uploading images')
+    }
+    const ext = (file.name.split('.').pop() || 'webp').toLowerCase()
+    const base = file.name.replace(/\.[^.]+$/, '').replace(/[^a-z0-9-]/gi, '-').toLowerCase()
+    try {
+      const r = await uploadMedia(token, slug, file, `${base}-${Date.now()}.${ext}`)
+      return r.url
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : 'Image upload failed', 'err')
+      throw e
+    }
+  }, [token, slug, showToast])
+
   const handleRemoveImage = useCallback(async () => {
     if (!slug) return
     try {
@@ -197,14 +203,6 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
           </button>
         )}
         <div style={{ flex: 1 }} />
-        <button
-          className="ghost btn-sm"
-          onClick={toggleRaw}
-          title={rawMode ? 'Switch to rich editor' : 'Switch to raw Markdown'}
-          style={{ fontFamily: 'var(--mono)', fontSize: 11 }}
-        >
-          {rawMode ? '⬩ Rich' : '⌥ Raw'}
-        </button>
         <div className="editor-btns">
           <button className="ghost" onClick={() => save(true)} disabled={saving}>
             {saving && <span className="spinner" />}
@@ -232,62 +230,6 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
             if (f) { handleFilePick(f); e.target.value = '' }
           }}
         />
-
-        {/* ── Hero image ─────────────────────────────────────────────────── */}
-        {imageUrl ? (
-          <div
-            className="doc-hero"
-            onDragOver={e => { e.preventDefault(); setDragOver(true) }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={onDrop}
-          >
-            <img src={imageUrl} alt="Header" className="doc-hero-img" />
-            <div className="doc-hero-overlay">
-              <button
-                className="ghost btn-sm doc-hero-btn"
-                onClick={() => fileRef.current?.click()}
-                disabled={uploading}
-              >
-                {uploading ? <span className="spinner" /> : '↑ Replace'}
-              </button>
-              <button
-                className="ghost btn-sm doc-hero-btn doc-hero-btn-remove"
-                onClick={handleRemoveImage}
-                disabled={uploading}
-              >
-                ✕ Remove
-              </button>
-            </div>
-            {uploading && (
-              <div className="doc-hero-uploading">
-                <span className="spinner" /> Uploading…
-              </div>
-            )}
-          </div>
-        ) : (
-          <div
-            className={`doc-hero-empty${dragOver ? ' over' : ''}${!slug ? ' no-slug' : ''}`}
-            onClick={() => slug
-              ? fileRef.current?.click()
-              : showToast('Save the post first to add a header image', 'err')
-            }
-            onDragOver={e => { e.preventDefault(); if (slug) setDragOver(true) }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={onDrop}
-          >
-            {uploading ? (
-              <><span className="spinner" /> Uploading…</>
-            ) : (
-              <>
-                <span className="doc-hero-icon">⊕</span>
-                <span className="doc-hero-label">
-                  {slug ? 'Add header image' : 'Save the post first to add a header image'}
-                </span>
-                {slug && <span className="muted" style={{ fontSize: 11 }}>Drop a file or click to browse</span>}
-              </>
-            )}
-          </div>
-        )}
 
         {/* ── Title ──────────────────────────────────────────────────────── */}
         <input
@@ -347,47 +289,96 @@ export default function PostEditor({ token, slug: initialSlug, onBack, onOpenMed
           </button>
         </div>
 
-        {/* ── Body ──────────────────────────────────────────────────────────────── */}
-        {rawMode ? (
-          <textarea
-            ref={bodyRef}
-            className="doc-body-ta"
-            value={form.body}
-            onChange={field('body')}
-            placeholder="Write your post in Markdown…"
-          />
+        {/* ── Hero image ─────────────────────────────────────────────────── */}
+        {imageUrl ? (
+          <div
+            className="doc-hero"
+            onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={onDrop}
+          >
+            <img src={imageUrl} alt="Header" className="doc-hero-img" />
+            <div className="doc-hero-overlay">
+              <button
+                className="ghost btn-sm doc-hero-btn"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+              >
+                {uploading ? <span className="spinner" /> : '↑ Replace'}
+              </button>
+              <button
+                className="ghost btn-sm doc-hero-btn doc-hero-btn-remove"
+                onClick={handleRemoveImage}
+                disabled={uploading}
+              >
+                ✕ Remove
+              </button>
+            </div>
+            {uploading && (
+              <div className="doc-hero-uploading">
+                <span className="spinner" /> Uploading…
+              </div>
+            )}
+          </div>
         ) : (
-          <MDXEditor
-            key={editorKey.current}
-            className="dark-editor doc-mdx-editor"
-            markdown={form.body}
-            onChange={v => setForm(f => ({ ...f, body: v }))}
-            plugins={[
-              headingsPlugin(),
-              listsPlugin(),
-              quotePlugin(),
-              thematicBreakPlugin(),
-              markdownShortcutPlugin(),
-              linkPlugin(),
-              linkDialogPlugin(),
-              toolbarPlugin({
-                toolbarContents: () => (
-                  <>
-                    <UndoRedo />
-                    <Separator />
-                    <BoldItalicUnderlineToggles />
-                    <Separator />
-                    <BlockTypeSelect />
-                    <Separator />
-                    <ListsToggle />
-                    <Separator />
-                    <CreateLink />
-                  </>
-                ),
-              }),
-            ]}
-          />
+          <div
+            className={`doc-hero-empty${dragOver ? ' over' : ''}${!slug ? ' no-slug' : ''}`}
+            onClick={() => slug
+              ? fileRef.current?.click()
+              : showToast('Save the post first to add a header image', 'err')
+            }
+            onDragOver={e => { e.preventDefault(); if (slug) setDragOver(true) }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={onDrop}
+          >
+            {uploading ? (
+              <><span className="spinner" /> Uploading…</>
+            ) : (
+              <>
+                <span className="doc-hero-icon">⊕</span>
+                <span className="doc-hero-label">
+                  {slug ? 'Add header image' : 'Save post first to add a header image'}
+                </span>
+                {slug && <span className="muted" style={{ fontSize: 11 }}>Drop a file or click to browse</span>}
+              </>
+            )}
+          </div>
         )}
+
+        {/* ── Body ──────────────────────────────────────────────────────────────── */}
+        <MDXEditor
+          key={editorKey.current}
+          className="dark-editor doc-mdx-editor"
+          markdown={form.body}
+          onChange={v => setForm(f => ({ ...f, body: v }))}
+          plugins={[
+            headingsPlugin(),
+            listsPlugin(),
+            quotePlugin(),
+            thematicBreakPlugin(),
+            markdownShortcutPlugin(),
+            linkPlugin(),
+            linkDialogPlugin(),
+            imagePlugin({ imageUploadHandler }),
+            diffSourcePlugin({ viewMode: 'rich-text', readOnlyDiff: false }),
+            toolbarPlugin({
+              toolbarContents: () => (
+                <DiffSourceToggleWrapper>
+                  <UndoRedo />
+                  <Separator />
+                  <BoldItalicUnderlineToggles />
+                  <Separator />
+                  <BlockTypeSelect />
+                  <Separator />
+                  <ListsToggle />
+                  <Separator />
+                  <CreateLink />
+                  <InsertImage />
+                </DiffSourceToggleWrapper>
+              ),
+            }),
+          ]}
+        />
       </div>
 
       {toast && (

@@ -24,6 +24,7 @@ import type { FastifyInstance } from "fastify";
 import { requireAuth } from "../auth.js";
 import { config } from "../config.js";
 import * as github from "../lib/github.js";
+import { isR2Enabled, uploadToR2 } from "../lib/r2.js";
 import { parseMarkdown, stringifyMarkdown } from "../lib/frontmatter.js";
 import {
   insertImageAtBodyTop,
@@ -133,23 +134,38 @@ export async function mediaRoutes(app: FastifyInstance): Promise<void> {
 
       try {
         const filePath = mediaRepoPath(postSlug, filename);
-        const existing = await github.getFile(filePath, false);
 
-        if (existing) {
-          return errorReply(reply, 409, "Media file already exists", "MEDIA_EXISTS", {
-            postSlug,
-            filename,
-            path: filePath,
+        let publicUrl: string;
+        let githubUrl: string | undefined;
+        let sha: string | undefined;
+        let commit: unknown;
+
+        if (isR2Enabled()) {
+          // ── R2 upload ──────────────────────────────────────────────────
+          const r2Key = `${config.r2ImageBasePath}/${postSlug}/${filename}`;
+          const buffer = Buffer.from(cleanData, "base64");
+          publicUrl = await uploadToR2(r2Key, buffer, contentType);
+        } else {
+          // ── GitHub fallback ────────────────────────────────────────────
+          const existing = await github.getFile(filePath, false);
+          if (existing) {
+            return errorReply(reply, 409, "Media file already exists", "MEDIA_EXISTS", {
+              postSlug,
+              filename,
+              path: filePath,
+            });
+          }
+          const result = await github.putFileBase64({
+            repoPath: filePath,
+            contentBase64: cleanData,
+            message: sanitizeCommitMessage(`Upload media: ${postSlug}/${filename}`),
           });
+          publicUrl = mediaPublicUrl(postSlug, filename);
+          githubUrl = result.content?.html_url;
+          sha = result.content?.sha;
+          commit = result.commit;
         }
 
-        const result = await github.putFileBase64({
-          repoPath: filePath,
-          contentBase64: cleanData,
-          message: sanitizeCommitMessage(`Upload media: ${postSlug}/${filename}`),
-        });
-
-        const publicUrl = mediaPublicUrl(postSlug, filename);
         const altText = escapeMarkdownAlt(input.alt || filename);
         const markdown =
           contentType === "application/pdf"
@@ -167,9 +183,10 @@ export async function mediaRoutes(app: FastifyInstance): Promise<void> {
           url: publicUrl,
           publicUrl,
           markdown,
-          githubUrl: result.content?.html_url,
-          sha: result.content?.sha,
-          commit: result.commit,
+          githubUrl,
+          sha,
+          commit,
+          storage: isR2Enabled() ? "r2" : "github",
         });
       } catch (err: unknown) {
         app.log.error(err, "POST /media failed");

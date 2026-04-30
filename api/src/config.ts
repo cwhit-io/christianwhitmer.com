@@ -43,10 +43,19 @@ export const config = {
   // Default author for new posts
   defaultAuthor: optionalEnv("DEFAULT_AUTHOR", ""),
 
-  // Media storage
+  // Media storage (GitHub fallback)
   repoImageBasePath: optionalEnv("REPO_IMAGE_BASE_PATH", "public/images/blog"),
   publicImageBasePath: optionalEnv("PUBLIC_IMAGE_BASE_PATH", "/images/blog"),
   maxMediaBytes: parseInt(optionalEnv("MAX_MEDIA_BYTES", String(2 * 1024 * 1024)), 10),
+
+  // Cloudflare R2 media storage (optional — set all four to enable)
+  r2AccountId: process.env["R2_ACCOUNT_ID"] || "",
+  r2AccessKeyId: process.env["R2_ACCESS_KEY_ID"] || "",
+  r2SecretAccessKey: process.env["R2_SECRET_ACCESS_KEY"] || "",
+  r2BucketName: process.env["R2_BUCKET_NAME"] || "",
+  r2PublicUrl: process.env["R2_PUBLIC_URL"] || "",
+  // Sub-path within the bucket for blog media, e.g. "images/blog"
+  r2ImageBasePath: optionalEnv("R2_IMAGE_BASE_PATH", "images/blog"),
 
   // OpenAI
   openaiApiKey: requireEnv("OPENAI_API_KEY"),
