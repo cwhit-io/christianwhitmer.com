@@ -250,3 +250,43 @@ export async function generateAndAttach(
   const data = await handleResponse<{ ok: boolean; publicUrl: string }>(res)
   return { url: data.publicUrl }
 }
+
+// ── Status & Logs ─────────────────────────────────────────────────────────────
+
+export interface StatusCheck {
+  label: string
+  method: string
+  url: string
+  statusCode: number | null
+  operational: boolean
+  protected: boolean
+  timeMs: number | null
+  error?: string
+}
+
+export interface StatusResponse {
+  ok: boolean
+  total: number
+  operational: number
+  down: number
+  checks: StatusCheck[]
+}
+
+export interface LogEntry {
+  timestamp: string
+  method: string
+  url: string
+  statusCode: number
+  responseTimeMs: number
+}
+
+export async function getStatus(): Promise<StatusResponse> {
+  const res = await fetch('/status')
+  return handleResponse<StatusResponse>(res)
+}
+
+export async function getLogs(token: string, limit = 100): Promise<LogEntry[]> {
+  const res = await fetch(`/logs?limit=${limit}`, { headers: authHeaders(token) })
+  const data = await handleResponse<{ ok: boolean; entries: LogEntry[] }>(res)
+  return data.entries || []
+}
