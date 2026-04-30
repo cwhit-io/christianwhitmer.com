@@ -7,7 +7,7 @@ tags:
   - "church-tech"
   - "av"
   - "volunteers"
-draft: true
+draft: false
 image: "https://r2.cwhit.io/images/blog/bill-had-one-eye-church-camera-lighting/hero-1777582657133.png"
 ---
 
