@@ -8,6 +8,7 @@ tags:
   - "api"
   - "astro"
 draft: false
+image: "r2.cwhit.io/images/blog/test-post-from-api/hero.jpg"
 ---
 
 This is a test post created by the API.
