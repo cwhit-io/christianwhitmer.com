@@ -22,6 +22,12 @@ const formattedDate = post.data.date.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
 });
+
+const heroSrc = post.data.image
+    ? (post.data.image.startsWith('http') ? post.data.image : `https://${post.data.image}`)
+    : post.data.headerImage
+    ? `/blog/${slug}/${post.data.headerImage}`
+    : null;
 ---
 
 <Layout
