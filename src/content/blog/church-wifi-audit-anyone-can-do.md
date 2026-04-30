@@ -9,6 +9,7 @@ tags:
   - "infrastructure"
   - "volunteers"
 draft: true
+image: "https://r2.cwhit.io/images/blog/church-wifi-audit-anyone-can-do/hero.png"
 ---
 
 Sunday morning has a way of exposing every weak link in your setup. And nothing unravels faster — or more publicly — than Wi-Fi. The check-in tablets spin. The livestream buffers. Someone's trying to pull up the sermon notes on stage and the connection just... disappears. You've been there.
