@@ -3,11 +3,13 @@ import { logout } from '../lib/api'
 import PostsList from '../components/PostsList'
 import PostEditor from '../components/PostEditor'
 import MediaManager from '../components/MediaManager'
+import StatusPage from './StatusPage'
 
 type View =
   | { name: 'posts' }
   | { name: 'editor'; slug: string | null }
   | { name: 'media'; postSlug?: string }
+  | { name: 'status' }
 
 interface Props {
   token: string
@@ -26,11 +28,12 @@ export default function Dashboard({ token, user, onLogout }: Props) {
   const goToPosts = useCallback(() => setView({ name: 'posts' }), [])
   const openEditor = useCallback((slug: string | null) => setView({ name: 'editor', slug }), [])
   const openMedia = useCallback((postSlug?: string) => setView({ name: 'media', postSlug }), [])
+  const goToStatus = useCallback(() => setView({ name: 'status' }), [])
 
   return (
     <div className="app-shell">
       <header className="app-header">
-        <span className="brand">✦ ChristianWhitmer.com</span>
+        <span className="brand">ChristianWhitmer.com</span>
         <nav className="app-nav">
           <button
             className={`nav-btn${view.name === 'posts' || view.name === 'editor' ? ' active' : ''}`}
@@ -43,6 +46,12 @@ export default function Dashboard({ token, user, onLogout }: Props) {
             onClick={() => openMedia()}
           >
             Media
+          </button>
+          <button
+            className={`nav-btn${view.name === 'status' ? ' active' : ''}`}
+            onClick={goToStatus}
+          >
+            Status
           </button>
         </nav>
         <span className="nav-spacer" />
@@ -73,6 +82,9 @@ export default function Dashboard({ token, user, onLogout }: Props) {
             initialSlug={view.postSlug}
             onBack={goToPosts}
           />
+        )}
+        {view.name === 'status' && (
+          <StatusPage token={token} />
         )}
       </main>
     </div>

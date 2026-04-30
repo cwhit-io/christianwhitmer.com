@@ -60,6 +60,8 @@ export interface UpdatePostInput {
   tags?: string[]
   draft?: boolean
   body?: string
+  /** Set to a URL to update the featured image; set to "" to remove it. */
+  image?: string
 }
 
 function authHeaders(token: string): Record<string, string> {

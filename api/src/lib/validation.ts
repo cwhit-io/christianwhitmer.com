@@ -180,6 +180,8 @@ export const postUpdateSchema = z.object({
   tags: z.array(z.string()).optional(),
   draft: z.boolean().optional(),
   body: z.string().optional(),
+  /** Set to a URL to update the featured image; set to "" to remove it. */
+  image: z.string().optional(),
 });
 
 export const mediaUploadSchema = z.object({

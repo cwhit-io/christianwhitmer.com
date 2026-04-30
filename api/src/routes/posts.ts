@@ -264,7 +264,7 @@ export async function postsRoutes(app: FastifyInstance): Promise<void> {
         const currentMarkdown = decodeBase64ToString(file.content);
         const current = parseMarkdown(currentMarkdown);
 
-        const mergedFrontmatter = {
+        const mergedFrontmatter: Record<string, unknown> = {
           ...current.frontmatter,
           ...(input.title !== undefined ? { title: input.title } : {}),
           ...(input.description !== undefined ? { description: input.description } : {}),
@@ -273,6 +273,10 @@ export async function postsRoutes(app: FastifyInstance): Promise<void> {
           ...(input.tags !== undefined ? { tags: input.tags } : {}),
           ...(input.draft !== undefined ? { draft: input.draft } : {}),
         };
+        if (input.image !== undefined) {
+          if (input.image === "") delete mergedFrontmatter["image"];
+          else mergedFrontmatter["image"] = input.image;
+        }
 
         const nextBody = input.body !== undefined ? input.body : current.body;
 
@@ -345,7 +349,7 @@ export async function postsRoutes(app: FastifyInstance): Promise<void> {
         const currentMarkdown = decodeBase64ToString(file.content);
         const current = parseMarkdown(currentMarkdown);
 
-        const mergedFrontmatter = {
+        const mergedFrontmatter: Record<string, unknown> = {
           ...current.frontmatter,
           ...(input.title !== undefined ? { title: input.title } : {}),
           ...(input.description !== undefined ? { description: input.description } : {}),
@@ -354,6 +358,10 @@ export async function postsRoutes(app: FastifyInstance): Promise<void> {
           ...(input.tags !== undefined ? { tags: input.tags } : {}),
           ...(input.draft !== undefined ? { draft: input.draft } : {}),
         };
+        if (input.image !== undefined) {
+          if (input.image === "") delete mergedFrontmatter["image"];
+          else mergedFrontmatter["image"] = input.image;
+        }
 
         const nextBody = input.body !== undefined ? input.body : current.body;
 
