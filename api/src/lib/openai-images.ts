@@ -27,15 +27,20 @@ export async function generateImageBase64(
   const quality = (input.quality ?? config.defaultImageQuality) as ImageQuality;
   const outputFormat = (input.outputFormat ?? config.defaultImageFormat) as ImageOutputFormat;
 
-  const requestBody = {
+  const requestBody: Record<string, unknown> = {
     model,
     prompt: input.prompt,
     size,
     quality,
     output_format: outputFormat,
-    response_format: "b64_json",
     n: 1,
   };
+
+  // response_format is a dall-e-2/dall-e-3 parameter only.
+  // gpt-image-1 / gpt-image-1.5 always return b64_json — don't send it.
+  if (model.startsWith("dall-e")) {
+    requestBody["response_format"] = "b64_json";
+  }
 
   const response = await fetch(OPENAI_IMAGES_URL, {
     method: "POST",
