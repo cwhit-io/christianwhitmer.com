@@ -13,6 +13,7 @@ export async function GET(context: APIContext) {
             'Thoughts, projects, and updates on web development and technology.',
         site: context.site!,
         items: posts
+            .filter((post) => !post.data.draft)
             .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
             .map((post) => ({
                 title: post.data.title,

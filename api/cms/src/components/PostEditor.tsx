@@ -133,18 +133,11 @@ export default function PostEditor({ token, slug: initialSlug, onBack }: Props) 
     setUploading(true)
     try {
       const ext = (file.name.split('.').pop() || 'webp').toLowerCase()
-      let url: string
-      try {
-        const r = await uploadMedia(token, slug, file, `hero.${ext}`)
-        url = r.url
-      } catch (e) {
-        if (e instanceof Error && e.message.toLowerCase().includes('already exists')) {
-          const r = await uploadMedia(token, slug, file, `hero-${Date.now()}.${ext}`)
-          url = r.url
-        } else throw e
-      }
-      await updatePost(token, slug, { image: url })
-      setImageUrl(url)
+      // Always use a timestamped filename so we never conflict with an existing
+      // hero image (GitHub returns 422 if you PUT without a SHA).
+      const r = await uploadMedia(token, slug, file, `hero-${Date.now()}.${ext}`)
+      await updatePost(token, slug, { image: r.url })
+      setImageUrl(r.url)
       showToast('Header image updated!')
     } catch (e) {
       showToast(e instanceof Error ? e.message : 'Upload failed', 'err')
