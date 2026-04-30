@@ -373,19 +373,29 @@ export async function mediaRoutes(app: FastifyInstance): Promise<void> {
         }
 
         const filePath = mediaRepoPath(postSlug, filename);
-
-        // Allow overwriting generated images (idempotent re-generate)
-        const existing = await github.getFile(filePath, false);
-
-        const result = await github.putFileBase64({
-          repoPath: filePath,
-          contentBase64: generation.b64,
-          message: sanitizeCommitMessage(`Generate media: ${postSlug}/${filename}`),
-          sha: existing?.sha,
-        });
-
-        const publicUrl = mediaPublicUrl(postSlug, filename);
         const contentType = outputFormatToContentType(outputFormat);
+        const buffer = Buffer.from(generation.b64, "base64");
+
+        let publicUrl: string;
+        let sha: string | undefined;
+        let commit: unknown;
+
+        if (isR2Enabled()) {
+          const r2Key = `${config.r2ImageBasePath}/${postSlug}/${filename}`;
+          publicUrl = await uploadToR2(r2Key, buffer, contentType);
+        } else {
+          // GitHub fallback — allow overwriting generated images
+          const existing = await github.getFile(filePath, false);
+          const result = await github.putFileBase64({
+            repoPath: filePath,
+            contentBase64: generation.b64,
+            message: sanitizeCommitMessage(`Generate media: ${postSlug}/${filename}`),
+            sha: existing?.sha,
+          });
+          publicUrl = mediaPublicUrl(postSlug, filename);
+          sha = result.content?.sha;
+          commit = result.commit;
+        }
 
         return reply.code(201).send({
           ok: true,
@@ -393,8 +403,9 @@ export async function mediaRoutes(app: FastifyInstance): Promise<void> {
           publicUrl,
           contentType,
           bytes,
-          sha: result.content?.sha,
-          commit: result.commit,
+          storage: isR2Enabled() ? "r2" : "github",
+          sha,
+          commit,
           generation: {
             model: generation.model,
             size: generation.size,
@@ -466,19 +477,30 @@ export async function mediaRoutes(app: FastifyInstance): Promise<void> {
           });
         }
 
-        // Step 2: Upload to GitHub
+        // Step 2: Upload to R2 or GitHub
         const mediaPath = mediaRepoPath(postSlug, filename);
-        const existingMedia = await github.getFile(mediaPath, false);
-
-        const mediaResult = await github.putFileBase64({
-          repoPath: mediaPath,
-          contentBase64: generation.b64,
-          message: sanitizeCommitMessage(`Generate media: ${postSlug}/${filename}`),
-          sha: existingMedia?.sha,
-        });
-
-        const publicUrl = mediaPublicUrl(postSlug, filename);
         const contentType = outputFormatToContentType(outputFormat);
+        const buffer = Buffer.from(generation.b64, "base64");
+
+        let publicUrl: string;
+        let mediaSha: string | undefined;
+        let mediaCommit: unknown;
+
+        if (isR2Enabled()) {
+          const r2Key = `${config.r2ImageBasePath}/${postSlug}/${filename}`;
+          publicUrl = await uploadToR2(r2Key, buffer, contentType);
+        } else {
+          const existingMedia = await github.getFile(mediaPath, false);
+          const mediaResult = await github.putFileBase64({
+            repoPath: mediaPath,
+            contentBase64: generation.b64,
+            message: sanitizeCommitMessage(`Generate media: ${postSlug}/${filename}`),
+            sha: existingMedia?.sha,
+          });
+          publicUrl = mediaPublicUrl(postSlug, filename);
+          mediaSha = mediaResult.content?.sha;
+          mediaCommit = mediaResult.commit;
+        }
 
         // Step 3: Attach to post
         const postPath = postRepoPath(postSlug);
@@ -529,8 +551,9 @@ export async function mediaRoutes(app: FastifyInstance): Promise<void> {
           publicUrl,
           contentType,
           bytes,
-          sha: mediaResult.content?.sha,
-          commit: mediaResult.commit,
+          storage: isR2Enabled() ? "r2" : "github",
+          sha: mediaSha,
+          commit: mediaCommit,
           postAttached: !!postFile,
           attachSha: attachResult.sha,
           attachCommit: attachResult.commit,
