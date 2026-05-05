@@ -18,7 +18,7 @@ interface Props {
 	limit?: number;
 }
 
-const { currentSlug, posts, limit = 4 } = Astro.props;
+const { currentSlug, posts, limit = 6 } = Astro.props;
 
 // Filter out the current post and limit to N posts
 const recentPosts = posts
@@ -66,9 +66,20 @@ const recentPosts = posts
 		gap: 1.5rem;
 	}
 
+	/* 3 columns: show only 3 (hide items 4+) */
+	@media (min-width: 1025px) {
+		.recent-posts-grid > :nth-child(n+4) {
+			display: none;
+		}
+	}
+
 	@media (max-width: 1024px) {
 		.recent-posts-grid {
 			grid-template-columns: repeat(2, 1fr);
+		}
+		/* 2 columns: show only 4 (hide items 5+) */
+		.recent-posts-grid > :nth-child(n+5) {
+			display: none;
 		}
 	}
 
@@ -80,6 +91,10 @@ const recentPosts = posts
 
 		.recent-posts-grid {
 			grid-template-columns: 1fr;
+		}
+		/* 1 column: show only 3 (hide items 4+) */
+		.recent-posts-grid > :nth-child(n+4) {
+			display: none;
 		}
 	}
 </style>

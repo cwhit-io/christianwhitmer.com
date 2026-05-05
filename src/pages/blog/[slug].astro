@@ -47,21 +47,13 @@ const allPosts = (await getCollection("blog"))
         class="article"
         data-pagefind-body
         transition:name={`post-card-${slug}`}
-        id="reading-target"
     >
-        <!-- Page header — works with or without hero image -->
+        <!-- Page header -->
         <header class="article-header">
-            <div class="article-header-top">
-                <div>
-                    <h1 class="article-title" transition:name={`post-title-${slug}`}>
-                        {post.data.title}
-                    </h1>
-                    <p class="article-subtitle">{post.data.description}</p>
-                </div>
-                <button class="reading-mode-btn" aria-label="Toggle reading mode" title="Toggle reading mode">
-                    <span class="reading-icon">◊</span>
-                </button>
-            </div>
+            <h1 class="article-title" transition:name={`post-title-${slug}`}>
+                {post.data.title}
+            </h1>
+            <p class="article-subtitle">{post.data.description}</p>
             <div class="article-meta">
                 <time datetime={post.data.date.toISOString()}
                     >{formattedDate}</time
@@ -107,37 +99,10 @@ const allPosts = (await getCollection("blog"))
         </footer>
 
         <!-- Recent posts section -->
-        <RecentPosts currentSlug={slug} posts={allPosts} limit={4} />
+        <RecentPosts currentSlug={slug} posts={allPosts} limit={6} />
     </article>
 
-    <script>
-        // Initialize reading mode state from localStorage
-        const readingModeBtn = document.querySelector('.reading-mode-btn');
-        const article = document.getElementById('reading-target');
-        
-        function updateReadingMode(isActive: boolean) {
-            if (isActive) {
-                article?.setAttribute('data-reading-mode', '');
-                readingModeBtn?.setAttribute('data-active', '');
-            } else {
-                article?.removeAttribute('data-reading-mode');
-                readingModeBtn?.removeAttribute('data-active');
-            }
-            localStorage.setItem('reading-mode', isActive ? 'true' : 'false');
-        }
 
-        // Check for saved reading mode preference
-        const savedReadingMode = localStorage.getItem('reading-mode') === 'true';
-        if (savedReadingMode) {
-            updateReadingMode(true);
-        }
-
-        // Toggle reading mode on button click
-        readingModeBtn?.addEventListener('click', () => {
-            const isCurrentlyActive = article?.hasAttribute('data-reading-mode');
-            updateReadingMode(!isCurrentlyActive);
-        });
-    </script>
 </Layout>
 
 <style>
@@ -151,64 +116,12 @@ const allPosts = (await getCollection("blog"))
         box-shadow: var(--shadow-1);
     }
 
-    /* ── Header with reading mode button ── */
+    /* ── Header ── */
     .article-header {
         text-align: left;
         padding: 2.5rem 2rem 2rem;
         border-bottom: 2px solid var(--divider);
         margin-bottom: 2rem;
-        position: relative;
-    }
-
-    .article-header-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .article-header-top > div {
-        flex: 1;
-    }
-
-    .reading-mode-btn {
-        flex-shrink: 0;
-        background: none;
-        border: 2px solid var(--divider);
-        padding: 0.5rem 0.75rem;
-        border-radius: var(--radius-1);
-        cursor: pointer;
-        color: var(--text-secondary);
-        font-size: 1rem;
-        transition: all var(--trans-1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        margin-top: 0.25rem;
-    }
-
-    .reading-mode-btn:hover {
-        border-color: var(--accent);
-        color: var(--accent);
-        background: color-mix(in srgb, var(--accent) 8%, transparent);
-    }
-
-    .reading-mode-btn[data-active] {
-        border-color: var(--accent);
-        background: color-mix(in srgb, var(--accent) 15%, transparent);
-        color: var(--accent);
-    }
-
-    .reading-icon {
-        display: block;
-    }
-
-    .header-badge {
-        /* removed — tags live in the meta line */
-        display: none;
     }
 
     .article-title {
@@ -331,85 +244,6 @@ const allPosts = (await getCollection("blog"))
         color: var(--accent);
     }
 
-    /* ──────────── READING MODE STYLES ──────────────────────────────────────── */
-
-    /* Reading mode: sepia tone and typography focus */
-    .article[data-reading-mode] {
-        --page-bg: #f5ede0;
-        --card-bg: #faf7f2;
-        --text-primary: #4a4540;
-        --text-secondary: #6b6360;
-        --divider: #e8dcc4;
-        --border: #e8dcc4;
-        --shadow-1: 0 1px 3px rgba(0, 0, 0, .06);
-        
-        filter: sepia(0.1) hue-rotate(0deg);
-    }
-
-    /* Reading mode: hide images */
-    .article[data-reading-mode] .article-image {
-        display: none;
-    }
-
-    .article[data-reading-mode] .reading-mode-btn {
-        border-color: var(--text-secondary);
-        color: var(--text-primary);
-    }
-
-    .article[data-reading-mode] .reading-mode-btn[data-active] {
-        border-color: var(--text-primary);
-        background: color-mix(in srgb, var(--text-primary) 10%, transparent);
-        color: var(--text-primary);
-    }
-
-    /* Improve readability in reading mode */
-    .article[data-reading-mode] .prose {
-        font-size: 1.05rem;
-        line-height: 1.9;
-        letter-spacing: 0.3px;
-    }
-
-    .article[data-reading-mode] h1,
-    .article[data-reading-mode] h2,
-    .article[data-reading-mode] h3,
-    .article[data-reading-mode] h4,
-    .article[data-reading-mode] h5,
-    .article[data-reading-mode] h6 {
-        color: var(--text-primary);
-        margin-top: 1.5rem;
-        margin-bottom: 0.75rem;
-    }
-
-    /* Subtle styling for code blocks in reading mode */
-    .article[data-reading-mode] code {
-        background: color-mix(in srgb, #000 5%, var(--card-bg));
-        border-radius: var(--radius-1);
-        padding: 0.1em 0.4em;
-        font-size: 0.9em;
-    }
-
-    .article[data-reading-mode] pre {
-        background: color-mix(in srgb, #000 3%, var(--card-bg));
-        border-left: 3px solid color-mix(in srgb, #000 15%, var(--card-bg));
-    }
-
-    /* Hide inline images in reading mode */
-    .article[data-reading-mode] img:not(.article-image img) {
-        display: none;
-    }
-
-    /* Tag styling in reading mode */
-    .article[data-reading-mode] .tag {
-        color: var(--text-primary);
-        border-color: color-mix(in srgb, var(--text-primary) 30%, transparent);
-        background: color-mix(in srgb, var(--text-primary) 8%, transparent);
-    }
-
-    .article[data-reading-mode] .tag:hover {
-        border-color: var(--text-primary);
-        background: color-mix(in srgb, var(--text-primary) 15%, transparent);
-    }
-
     @media (max-width: 640px) {
         .article {
             border-radius: 0;
@@ -420,15 +254,6 @@ const allPosts = (await getCollection("blog"))
         .article-header {
             padding: 1.5rem 1rem 1rem;
             margin-bottom: 1.5rem;
-        }
-
-        .article-header-top {
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .reading-mode-btn {
-            align-self: flex-start;
         }
 
         .prose {

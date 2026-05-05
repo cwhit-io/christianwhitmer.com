@@ -9,12 +9,14 @@ interface Props {
 	title?: string;
 	description?: string;
 	ogImage?: string;
+	noindex?: boolean;
 }
 
 const {
 	title = "Christian Whitmer",
 	description = "Thoughts, projects, and updates on web development and technology.",
 	ogImage,
+	noindex = false,
 } = Astro.props;
 
 const pageTitle =
@@ -40,6 +42,7 @@ const ogImageUrl = ogImage
 		<title>{pageTitle}</title>
 		<meta name="description" content={description} />
 		<meta name="author" content="Christian Whitmer" />
+		{noindex && <meta name="robots" content="noindex, follow" />}
 		<!-- Canonical -->
 		<link rel="canonical" href={canonicalUrl} />
 		<!-- Open Graph -->

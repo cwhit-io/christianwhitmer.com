@@ -1,8 +1,22 @@
 ---
+/**
+ * Dynamic tag archive page
+ * 
+ * Safeguards against tag bloat and SEO thin content:
+ * 1. Tags are normalized to lowercase at schema level (src/content/config.ts)
+ *    This prevents duplicate tag pages like "astro", "Astro", "ASTRO"
+ * 
+ * 2. Tags with fewer than 3 posts are marked with noindex meta tag
+ *    This prevents search engines from indexing low-value archive pages
+ *    See: isThinContent check below
+ */
+
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PostCard from "../../components/PostCard.astro";
 import Pagination from "../../components/Pagination.astro";
+
+export const prerender = true;
 
 export async function getStaticPaths() {
 	const allPosts = await getCollection("blog");
@@ -10,6 +24,7 @@ export async function getStaticPaths() {
 
 	allPosts.forEach((post) => {
 		post.data.tags?.forEach((tag) => {
+			// Tags are already normalized to lowercase at schema level
 			allTags.add(tag);
 		});
 	});
@@ -28,9 +43,13 @@ const POSTS_PER_PAGE = 12;
 
 const { tag } = Astro.props;
 
+// Tags are already lowercase from schema normalization
 const allPosts = (await getCollection("blog"))
 	.filter((post) => !post.data.draft && post.data.tags?.includes(tag))
 	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Check if this is thin content (less than 3 posts)
+const isThinContent = allPosts.length < 3;
 
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = Math.max(1, parseInt(pageParam ?? "1") || 1);
@@ -49,7 +68,7 @@ const pageTitle = `Posts tagged "${tag}"`;
 const description = `All posts related to ${tag}`;
 ---
 
-<Layout title={pageTitle} description={description}>
+<Layout title={pageTitle} description={description} noindex={isThinContent}>
 	<section class="tag-page">
 		<header class="tag-header">
 			<a href="/" class="tag-back-link">← Back to all posts</a>

@@ -112,7 +112,8 @@ const formattedDate = date.toLocaleDateString("en-US", {
 	}
 
 	.card-link {
-		display: block;
+		display: flex;
+		flex-direction: column;
 		text-decoration: none;
 		color: inherit;
 		height: 100%;
@@ -135,6 +136,7 @@ const formattedDate = date.toLocaleDateString("en-US", {
 		display: flex;
 		flex-direction: column;
 		gap: 0.4rem;
+		flex: 1;
 	}
 
 	.card-meta {
