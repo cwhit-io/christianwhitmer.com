@@ -59,10 +59,10 @@ The good news is that NDI is more forgiving than some networked AV protocols. Fo
 
 That said, a few things will save you headaches:
 
-- Keep NDI traffic on a wired network, not Wi-Fi
-- Use a gigabit switch — not the old 100Mbps one from 2009 sitting in the closet
-- If you're running several NDI streams, consider a managed switch that supports IGMP snooping to keep multicast traffic from flooding the network
-- Keep NDI devices on the same subnet as the computers receiving them
+* Keep NDI traffic on a wired network, not Wi-Fi
+* Use a gigabit switch — not the old 100Mbps one from 2009 sitting in the closet
+* If you're running several NDI streams, consider a managed switch that supports IGMP snooping to keep multicast traffic from flooding the network
+* Keep NDI devices on the same subnet as the computers receiving them
 
 You don't need to be a network engineer. But you do need to know that throwing NDI onto a congested or poorly configured network will give you dropped frames and headaches. Start clean, start simple.
 
