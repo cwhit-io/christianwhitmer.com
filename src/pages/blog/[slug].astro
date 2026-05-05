@@ -76,7 +76,7 @@ const allPosts = (await getCollection("blog"))
                             </span>
                             <span class="article-tags">
                                 {post.data.tags.map((tag) => (
-                                    <span class="tag">{tag}</span>
+                                    <a href={`/tags/${encodeURIComponent(tag)}`} class="tag" data-astro-prefetch>{tag}</a>
                                 ))}
                             </span>
                         </>
@@ -107,7 +107,7 @@ const allPosts = (await getCollection("blog"))
         </footer>
 
         <!-- Recent posts section -->
-        <RecentPosts currentSlug={slug} posts={allPosts} limit={3} />
+        <RecentPosts currentSlug={slug} posts={allPosts} limit={4} />
     </article>
 
     <script>
@@ -269,8 +269,18 @@ const allPosts = (await getCollection("blog"))
         font-family: var(--font-body);
         color: var(--tag-text);
         white-space: nowrap;
-        cursor: default;
+        text-decoration: none;
+        cursor: pointer;
         user-select: none;
+        transition: all var(--trans-1);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 12%, transparent);
+        }
     }
 
     /* ── Hero image — inline, demoted, constrained to prose width ── */
@@ -386,6 +396,18 @@ const allPosts = (await getCollection("blog"))
     /* Hide inline images in reading mode */
     .article[data-reading-mode] img:not(.article-image img) {
         display: none;
+    }
+
+    /* Tag styling in reading mode */
+    .article[data-reading-mode] .tag {
+        color: var(--text-primary);
+        border-color: color-mix(in srgb, var(--text-primary) 30%, transparent);
+        background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    }
+
+    .article[data-reading-mode] .tag:hover {
+        border-color: var(--text-primary);
+        background: color-mix(in srgb, var(--text-primary) 15%, transparent);
     }
 
     @media (max-width: 640px) {

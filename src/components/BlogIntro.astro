@@ -1,0 +1,68 @@
+---
+---
+
+<section class="blog-intro">
+	<div class="blog-intro-badge">Personal Blog</div>
+	<h2 class="blog-intro-title">
+		Thoughts &amp; ideas from<br />
+		<span class="blog-intro-accent">Christian Whitmer</span>
+	</h2>
+	<p class="blog-intro-sub">
+		Exploring web development, technology, and creative projects. Sharing
+		what I learn along the way.
+	</p>
+</section>
+
+<style>
+	.blog-intro {
+		max-width: 680px;
+		margin: 2rem auto 3rem;
+		text-align: center;
+		padding: 0 1rem;
+	}
+
+	.blog-intro-badge {
+		display: inline-block;
+		padding: 0.275rem 0.875rem;
+		border-radius: 999px;
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.07em;
+		text-transform: uppercase;
+		color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+		margin-bottom: 1.5rem;
+	}
+
+	.blog-intro-title {
+		font-family: var(--font-title);
+		font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		line-height: 1.15;
+		color: var(--text-primary);
+		margin-bottom: 1rem;
+	}
+
+	.blog-intro-accent {
+		background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.blog-intro-sub {
+		font-size: 0.95rem;
+		color: var(--text-secondary);
+		max-width: 420px;
+		margin: 0 auto;
+		line-height: 1.75;
+	}
+
+	@media (max-width: 640px) {
+		.blog-intro {
+			margin: 1.5rem auto 2.5rem;
+		}
+	}
+</style>

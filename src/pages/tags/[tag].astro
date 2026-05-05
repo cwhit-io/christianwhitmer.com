@@ -1,0 +1,183 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PostCard from "../../components/PostCard.astro";
+import Pagination from "../../components/Pagination.astro";
+
+export async function getStaticPaths() {
+	const allPosts = await getCollection("blog");
+	const allTags = new Set<string>();
+
+	allPosts.forEach((post) => {
+		post.data.tags?.forEach((tag) => {
+			allTags.add(tag);
+		});
+	});
+
+	return Array.from(allTags).map((tag) => ({
+		params: { tag },
+		props: { tag },
+	}));
+}
+
+interface Props {
+	tag: string;
+}
+
+const POSTS_PER_PAGE = 12;
+
+const { tag } = Astro.props;
+
+const allPosts = (await getCollection("blog"))
+	.filter((post) => !post.data.draft && post.data.tags?.includes(tag))
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const pageParam = Astro.url.searchParams.get("page");
+const currentPage = Math.max(1, parseInt(pageParam ?? "1") || 1);
+const totalPages = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE));
+const safePage = Math.min(currentPage, totalPages);
+
+const posts = allPosts.slice(
+	(safePage - 1) * POSTS_PER_PAGE,
+	safePage * POSTS_PER_PAGE,
+);
+
+const prevUrl = safePage > 1 ? `/tags/${tag}?page=${safePage - 1}` : null;
+const nextUrl = safePage < totalPages ? `/tags/${tag}?page=${safePage + 1}` : null;
+
+const pageTitle = `Posts tagged "${tag}"`;
+const description = `All posts related to ${tag}`;
+---
+
+<Layout title={pageTitle} description={description}>
+	<section class="tag-page">
+		<header class="tag-header">
+			<a href="/" class="tag-back-link">← Back to all posts</a>
+			<div class="tag-badge">{tag}</div>
+			<h1 class="tag-title">Posts tagged <span class="tag-highlight">"{tag}"</span></h1>
+			<p class="tag-count">
+				{allPosts.length} {allPosts.length === 1 ? "post" : "posts"} found
+			</p>
+		</header>
+
+		{posts.length > 0 ? (
+			<>
+				<div class="posts-grid">
+					{posts.map((post) => (
+						<PostCard
+							title={post.data.title}
+							description={post.data.description}
+							date={post.data.date}
+							author={post.data.author}
+							slug={post.slug}
+							headerImage={post.data.headerImage}
+							image={post.data.image}
+							tags={post.data.tags}
+						/>
+					))}
+				</div>
+				{totalPages > 1 && (
+					<Pagination
+						currentPage={safePage}
+						totalPages={totalPages}
+						prevUrl={prevUrl}
+						nextUrl={nextUrl}
+					/>
+				)}
+			</>
+		) : (
+			<p class="empty">No posts found with this tag.</p>
+		)}
+	</section>
+</Layout>
+
+<style>
+	.tag-page {
+		max-width: 1100px;
+		margin: 0 auto;
+		padding: 2rem 1rem;
+	}
+
+	.tag-header {
+		margin-bottom: 3rem;
+		text-align: center;
+	}
+
+	.tag-back-link {
+		display: inline-block;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--text-secondary);
+		text-decoration: none;
+		transition: color var(--trans-1);
+		margin-bottom: 1.5rem;
+	}
+
+	.tag-back-link:hover {
+		color: var(--accent);
+	}
+
+	.tag-badge {
+		display: inline-block;
+		padding: 0.375rem 1rem;
+		border-radius: 999px;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
+		border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+		margin-bottom: 1.5rem;
+	}
+
+	.tag-title {
+		font-family: var(--font-title);
+		font-size: clamp(1.8rem, 4vw, 2.8rem);
+		font-weight: 800;
+		line-height: 1.2;
+		letter-spacing: -0.025em;
+		color: var(--text-primary);
+		margin-bottom: 0.75rem;
+	}
+
+	.tag-highlight {
+		background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.tag-count {
+		font-size: 0.95rem;
+		color: var(--text-secondary);
+	}
+
+	.posts-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 1.5rem;
+		margin-bottom: 2rem;
+	}
+
+	.empty {
+		color: var(--text-secondary);
+		font-size: 0.95rem;
+		text-align: center;
+		padding: 3rem 1rem;
+	}
+
+	@media (max-width: 640px) {
+		.tag-page {
+			padding: 1rem;
+		}
+
+		.tag-header {
+			margin-bottom: 2rem;
+		}
+
+		.posts-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
