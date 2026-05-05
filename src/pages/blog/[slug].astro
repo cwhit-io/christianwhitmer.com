@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import RecentPosts from "../../components/RecentPosts.astro";
 
 export const prerender = true;
 
@@ -30,6 +31,11 @@ const heroSrc = post.data.image
     : post.data.headerImage
     ? `/blog/${slug}/${post.data.headerImage}`
     : null;
+
+// Get all posts sorted by date for recent posts section
+const allPosts = (await getCollection("blog"))
+    .filter((p) => !p.data.draft)
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
 <Layout
@@ -99,6 +105,9 @@ const heroSrc = post.data.image
         <footer class="article-footer" data-pagefind-ignore>
             <a href="/" class="back-btn">← Back to all posts</a>
         </footer>
+
+        <!-- Recent posts section -->
+        <RecentPosts currentSlug={slug} posts={allPosts} limit={3} />
     </article>
 
     <script>

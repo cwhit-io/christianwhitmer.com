@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import Hero from "../components/Hero.astro";
+import FeaturedPost from "../components/FeaturedPost.astro";
 import PostCard from "../components/PostCard.astro";
 import Pagination from "../components/Pagination.astro";
 
@@ -11,12 +11,18 @@ const allPosts = (await getCollection("blog"))
     .filter((post) => !post.data.draft)
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
+// Get the latest post for hero
+const latestPost = allPosts[0];
+
+// For pagination, skip the first post since it's featured
+const remainingPosts = allPosts.slice(1);
+
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = Math.max(1, parseInt(pageParam ?? "1") || 1);
-const totalPages = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE));
+const totalPages = Math.max(1, Math.ceil(remainingPosts.length / POSTS_PER_PAGE));
 const safePage = Math.min(currentPage, totalPages);
 
-const posts = allPosts.slice(
+const posts = remainingPosts.slice(
     (safePage - 1) * POSTS_PER_PAGE,
     safePage * POSTS_PER_PAGE,
 );
@@ -26,7 +32,17 @@ const nextUrl = safePage < totalPages ? `/?page=${safePage + 1}#blog` : null;
 ---
 
 <Layout>
-    <Hero />
+    {latestPost && (
+        <FeaturedPost
+            title={latestPost.data.title}
+            description={latestPost.data.description}
+            date={latestPost.data.date}
+            author={latestPost.data.author}
+            slug={latestPost.slug}
+            image={latestPost.data.image}
+            headerImage={latestPost.data.headerImage}
+        />
+    )}
 
     <!-- Posts grid -->
     <section id="blog" class="posts-section">
