@@ -65,10 +65,10 @@ Proverbs 27:23 says to know the condition of your flocks — to stay close to wh
 
 You don't have to rip out your existing system to try Dante. Here's a low-pressure way to get your feet wet:
 
-- Download **Dante Controller** for free from Audinate's website and just explore the interface
-- Pick up a **Dante AVIO analog input adapter** and connect it to something you already own
-- Watch a few videos from the Audinate YouTube channel — they're genuinely well done
-- Check whether your current console or any of your wireless gear already has Dante built in
+* Download **Dante Controller** for free from Audinate's website and just explore the interface
+* Pick up a **Dante AVIO analog input adapter** and connect it to something you already own
+* Watch a few videos from the Audinate YouTube channel — they're genuinely well done
+* Check whether your current console or any of your wireless gear already has Dante built in
 
 You might be closer to a Dante setup than you think.
 
