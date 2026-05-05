@@ -8,6 +8,8 @@ tags:
   - "ministry-operations"
   - "communications"
 draft: true
+image: "https://r2.cwhit.io/images/blog/they-were-all-tech-guys/printing-press-church-tech-history.webp"
+imageAlt: "An antique printing press with scattered papers and quill pen, softly blending into a modern church communications workspace"
 ---
 
 Every now and then, someone pulls me aside after a Sunday service and says something like, "You know, I just feel like all this technology is getting in the way of real ministry." And I get it — I really do. There's something that feels spiritually serious about simplicity.
