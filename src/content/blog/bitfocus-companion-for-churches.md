@@ -9,6 +9,8 @@ tags:
   - "volunteers"
   - "ministry-operations"
 draft: true
+image: "https://r2.cwhit.io/images/blog/bitfocus-companion-for-churches/stream-deck-church-tech-booth.webp"
+imageAlt: "Elgato Stream Deck with colorful buttons at a church AV tech booth on Sunday morning"
 ---
 
 You're three minutes from the start of service. The worship leader is asking if the lyrics are ready, the pastor just changed his sermon opener, and someone unplugged the wrong thing in the back. Again.
