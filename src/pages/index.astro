@@ -33,6 +33,8 @@ const nextUrl = safePage < totalPages ? `/?page=${safePage + 1}#blog` : null;
 ---
 
 <Layout>
+    <BlogIntro />
+
     {latestPost && (
         <FeaturedPost
             title={latestPost.data.title}
@@ -44,8 +46,6 @@ const nextUrl = safePage < totalPages ? `/?page=${safePage + 1}#blog` : null;
             headerImage={latestPost.data.headerImage}
         />
     )}
-
-    <BlogIntro />
 
     <!-- Posts grid -->
     <section id="blog" class="posts-section">

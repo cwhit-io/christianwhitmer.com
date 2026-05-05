@@ -1,53 +1,72 @@
 ---
+import Search from "./Search.astro";
 ---
 
-<div class="blog-intro">
-	<span class="blog-intro-rule" aria-hidden="true"></span>
-	<p class="blog-intro-text">
-		Thoughts on church technology, ministry &amp; creativity
-		&mdash; by <strong>Christian Whitmer</strong>
-	</p>
-	<span class="blog-intro-rule" aria-hidden="true"></span>
-</div>
+<header class="site-intro">
+	<div class="site-intro-inner">
+		<div class="site-intro-text">
+			<h1 class="site-intro-name">Christian Whitmer</h1>
+			<p class="site-intro-tagline">
+				Thoughts on church technology, ministry &amp; the people behind it
+			</p>
+		</div>
+		<div class="site-intro-search">
+			<Search />
+		</div>
+	</div>
+</header>
 
 <style>
-	.blog-intro {
+	.site-intro {
 		max-width: 1100px;
 		margin: 0 auto 2.5rem;
+		padding: 2.5rem 0 2rem;
+		border-bottom: 1px solid var(--divider);
+	}
+
+	.site-intro-inner {
 		display: flex;
 		align-items: center;
-		gap: 1.5rem;
-		padding: 0 0.5rem;
+		justify-content: space-between;
+		gap: 2rem;
 	}
 
-	.blog-intro-rule {
-		flex: 1;
-		height: 1px;
-		background: var(--divider);
-		display: block;
-	}
-
-	.blog-intro-text {
-		flex-shrink: 0;
-		font-size: 0.8rem;
-		color: var(--text-secondary);
-		letter-spacing: 0.02em;
-		white-space: nowrap;
-	}
-
-	.blog-intro-text strong {
+	.site-intro-name {
+		font-family: var(--font-title);
+		font-size: clamp(1.4rem, 3vw, 1.9rem);
+		font-weight: 800;
+		letter-spacing: -0.025em;
 		color: var(--text-primary);
-		font-weight: 600;
+		margin-bottom: 0.35rem;
+		line-height: 1.1;
 	}
 
-	@media (max-width: 640px) {
-		.blog-intro {
+	.site-intro-tagline {
+		font-size: 0.9rem;
+		color: var(--text-secondary);
+		line-height: 1.5;
+		max-width: 42ch;
+	}
+
+	.site-intro-search {
+		flex-shrink: 0;
+		width: 260px;
+	}
+
+	@media (max-width: 768px) {
+		.site-intro {
+			padding: 1.75rem 0 1.5rem;
 			margin-bottom: 2rem;
 		}
 
-		.blog-intro-text {
-			white-space: normal;
-			text-align: center;
+		.site-intro-inner {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 1rem;
+		}
+
+		.site-intro-search {
+			width: 100%;
 		}
 	}
 </style>
