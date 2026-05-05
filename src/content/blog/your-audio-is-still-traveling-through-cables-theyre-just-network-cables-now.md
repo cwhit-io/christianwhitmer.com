@@ -9,6 +9,8 @@ tags:
   - "networking"
   - "volunteers"
 draft: true
+image: "https://r2.cwhit.io/images/blog/your-audio-is-still-traveling-through-cables-theyre-just-network-cables-now/dante-audio-church-network-desk.webp"
+imageAlt: "Church audio engineer's desk with a digital mixing console, laptop showing audio routing software, ethernet switch, and a coiled XLR cable"
 ---
 
 If you learned audio on a 32-channel analog board with a snake running to the stage, you already understand the most important thing about Dante. Audio travels from point A to point B through a cable. Dante just changed what kind of cable.
