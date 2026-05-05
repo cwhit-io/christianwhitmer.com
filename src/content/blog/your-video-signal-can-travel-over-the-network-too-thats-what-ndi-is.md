@@ -9,7 +9,7 @@ tags:
   - "networking"
   - "volunteers"
 draft: false
-image: "https://r2.cwhit.io/images/blog/your-video-signal-can-travel-over-the-network-too-thats-what-ndi-is/ndi-video-church-network-production.webp"
+image: "https://r2.cwhit.io/images/blog/your-video-signal-can-travel-over-the-network-too-thats-what-ndi-is/hero-1777992206867.jpg"
 imageAlt: "Church video production desk with laptop, ethernet switch, patch cables, and an HDMI cable showing the contrast between traditional and network-based video routing"
 ---
 
