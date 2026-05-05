@@ -2,7 +2,7 @@
 title: "Your Video Signal Can Travel Over the Network Too — That's What NDI Is"
 description: "NDI lets video travel over your existing network cable instead of HDMI runs — and once it clicks, you'll wonder why you ever ran long cable pulls."
 author: "Christian Whitmer"
-date: 2026-05-05
+date: 2026-01-11
 tags:
   - "church-tech"
   - "av"

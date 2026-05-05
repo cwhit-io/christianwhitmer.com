@@ -2,7 +2,7 @@
 title: "How to Say No to Announcement Requests Without Killing Ministry Momentum"
 description: "A practical framework for communications staff to set boundaries, filter requests, and still keep every ministry team feeling heard."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-03-09
 tags:
   - "communications"
   - "ministry-operations"

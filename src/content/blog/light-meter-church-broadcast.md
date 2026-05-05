@@ -2,7 +2,7 @@
 title: "Stop Guessing: Why Every Church Broadcast Setup Needs a Light Meter"
 description: "If you're dialing in your stage lighting by eye, you're guessing. Here's the $200 tool that takes the guesswork out of broadcast lighting for good."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-02-27
 tags:
   - "church-tech"
   - "av"

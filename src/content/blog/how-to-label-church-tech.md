@@ -2,7 +2,7 @@
 title: "How to Label Church Tech So Future You Doesn't Hate Present You"
 description: "A practical guide to labeling cables, racks, breakers, inputs, remotes, and storage bins — so anyone can walk into your tech space and figure out what's going on."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-03-16
 tags:
   - "church-tech"
   - "av"

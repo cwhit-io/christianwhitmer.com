@@ -2,7 +2,7 @@
 title: "Five Things Your Communications Director Could Stop Doing Manually Right Now"
 description: "Practical AI automations that free up staff time for actual ministry."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-03-28
 tags:
   - "ai"
   - "communications"

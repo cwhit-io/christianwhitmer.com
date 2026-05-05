@@ -2,7 +2,7 @@
 title: "Your Room Mix and Your Livestream Mix Aren't the Same — But You Don't Need Two of Everything"
 description: "The online mix sounds different from the room — but the fix isn't a second console or a dedicated engineer. Here's a practical approach any church audio volunteer can actually pull off."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-02-07
 tags:
   - "church-tech"
   - "av"

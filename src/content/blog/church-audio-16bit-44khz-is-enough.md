@@ -2,7 +2,7 @@
 title: "Your Church's Audio Doesn't Need to Be Recorded at 96kHz to Sound Good"
 description: "Tech volunteers obsessing over sample rates are solving a problem that doesn't exist. Here's why 16-bit/44.1kHz is more than enough — and where to actually focus your energy."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-04-17
 tags:
   - "church-tech"
   - "av"

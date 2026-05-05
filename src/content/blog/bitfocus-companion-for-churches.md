@@ -2,7 +2,7 @@
 title: "The Button Box That Changes How You Run Sunday Morning"
 description: "Bitfocus Companion turns a simple Stream Deck into a powerful show control surface — and yes, your volunteers can actually learn it."
 author: "Christian Whitmer"
-date: 2026-05-05
+date: 2026-01-30
 tags:
   - "church-tech"
   - "av"

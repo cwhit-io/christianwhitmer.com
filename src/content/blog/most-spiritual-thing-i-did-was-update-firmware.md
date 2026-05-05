@@ -2,7 +2,7 @@
 title: "The Most Spiritual Thing I Did This Week Was Update Firmware"
 description: "Firmware updates aren't exciting. But the unseen maintenance work that keeps ministry running is one of the most faithful things a church tech person can do."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-02-18
 tags:
   - "church-tech"
   - "infrastructure"

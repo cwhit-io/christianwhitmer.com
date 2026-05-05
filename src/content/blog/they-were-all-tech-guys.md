@@ -2,7 +2,7 @@
 title: "They Were All Tech Guys: How History's Greatest Preachers Used Cutting-Edge Technology"
 description: "Before you write off church tech as a distraction from \"real ministry,\" meet the pastors who went all-in on the technology of their day — and changed the world because of it."
 author: "Christian Whitmer"
-date: 2026-05-05
+date: 2026-05-5
 tags:
   - "church-tech"
   - "ministry-operations"

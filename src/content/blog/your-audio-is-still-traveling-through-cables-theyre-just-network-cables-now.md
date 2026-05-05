@@ -2,7 +2,7 @@
 title: "Your Audio Is Still Traveling Through Cables — They're Just Network Cables Now"
 description: "Dante audio networking feels intimidating if you grew up on analog gear. Here's what it actually is, how it works, and why it might be the best upgrade your church never knew it needed."
 author: "Christian Whitmer"
-date: 2026-05-05
+date: 2026-01-20
 tags:
   - "church-tech"
   - "av"

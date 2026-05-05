@@ -2,7 +2,7 @@
 title: "The Church Wi-Fi Audit Anyone Can Do"
 description: "You don't need a network certification to know your church Wi-Fi is struggling. Here's a practical walkthrough any staff member or volunteer can run before Sunday breaks it for you."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-04-06
 tags:
   - "church-tech"
   - "networking"

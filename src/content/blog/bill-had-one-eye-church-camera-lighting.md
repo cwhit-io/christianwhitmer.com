@@ -2,7 +2,7 @@
 title: "Bill Had One Eye and He Taught Me Everything I Know About Church Camera Work"
 description: "Before you spend your whole camera budget on a camera, read this. A retired Hollywood grip with one eye changed the way I think about video in the church."
 author: "Christian Whitmer"
-date: 2026-04-30
+date: 2026-04-25
 tags:
   - "church-tech"
   - "av"
