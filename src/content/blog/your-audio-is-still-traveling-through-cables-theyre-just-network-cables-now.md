@@ -9,7 +9,7 @@ tags:
   - "networking"
   - "volunteers"
 draft: false
-image: "https://r2.cwhit.io/images/blog/your-audio-is-still-traveling-through-cables-theyre-just-network-cables-now/dante-audio-church-network-desk.webp"
+image: "https://r2.cwhit.io/images/blog/your-audio-is-still-traveling-through-cables-theyre-just-network-cables-now/hero-1777992164734.jpg"
 imageAlt: "Church audio engineer's desk with a digital mixing console, laptop showing audio routing software, ethernet switch, and a coiled XLR cable"
 ---
 
