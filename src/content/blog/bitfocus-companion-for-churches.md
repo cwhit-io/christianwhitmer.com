@@ -8,7 +8,7 @@ tags:
   - "av"
   - "volunteers"
   - "ministry-operations"
-draft: true
+draft: false
 image: "https://r2.cwhit.io/images/blog/bitfocus-companion-for-churches/stream-deck-church-tech-booth.webp"
 imageAlt: "Elgato Stream Deck with colorful buttons at a church AV tech booth on Sunday morning"
 ---
