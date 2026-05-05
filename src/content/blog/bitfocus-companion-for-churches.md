@@ -51,10 +51,10 @@ Start small. Don't try to automate your entire service on day one. Pick one work
 
 The barrier to entry is low. Here's the short list:
 
-- **Bitfocus Companion** — free download at bitfocus.io
-- **A controller** — the Elgato Stream Deck is the most popular choice. The 15-button model is a great starting point and runs around $150. There are also smaller and larger versions depending on your needs.
-- **A computer to run it on** — a spare laptop or a $100 mini PC works fine. It doesn't need to be powerful.
-- **Your existing software** — Companion connects to what you already have.
+* **Bitfocus Companion** — free download at bitfocus.io
+* **A controller** — the Elgato Stream Deck is the most popular choice. The 15-button model is a great starting point and runs around $150. There are also smaller and larger versions depending on your needs.
+* **A computer to run it on** — a spare laptop or a $100 mini PC works fine. It doesn't need to be powerful.
+* **Your existing software** — Companion connects to what you already have.
 
 That's it. No subscription. No licensing fees. Just a little time and a willingness to tinker.
 
