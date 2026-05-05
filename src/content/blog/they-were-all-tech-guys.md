@@ -8,7 +8,7 @@ tags:
   - "ministry-operations"
   - "communications"
 draft: false
-image: "https://r2.cwhit.io/images/blog/they-were-all-tech-guys/printing-press-church-tech-history.webp"
+image: "https://r2.cwhit.io/images/blog/they-were-all-tech-guys/hero-1777992150435.jpg"
 imageAlt: "An antique printing press with scattered papers and quill pen, softly blending into a modern church communications workspace"
 ---
 
