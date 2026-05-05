@@ -9,7 +9,7 @@ tags:
   - "volunteers"
   - "ministry-operations"
 draft: false
-image: "https://r2.cwhit.io/images/blog/bitfocus-companion-for-churches/stream-deck-church-tech-booth.webp"
+image: "https://r2.cwhit.io/images/blog/bitfocus-companion-for-churches/hero-1777992126649.jpg"
 imageAlt: "Elgato Stream Deck with colorful buttons at a church AV tech booth on Sunday morning"
 ---
 
